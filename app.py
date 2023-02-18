@@ -6,11 +6,18 @@ import json
 from multipage import MultiPage
 from pages_ import landing_page, zero_upload, one_preprocess, two_masking, three_roi, four_analysis, five_data, six_ht
 
+@st.cache
+def make_sessions_dir():
+  if (not os.path.isdir("session")):
+    os.mkdir("session")
 
 # Define the on_update function for resize updating
 def on_update():
 	st.session_state.universal_resize_factor = st.session_state.universal_resize_factor_input
 
+# Sets up 'session' directory if none exists
+## Maybe remove if included in Docker construction
+make_sessions_dir()
 
 # Create an instance of the app 
 app = MultiPage()
@@ -35,7 +42,7 @@ if ("session_data" not in st.session_state):
 									"data":{}
 									}
 	st.session_state.user_config = None
-	st.session_state.universal_resize_factor = 4
+	st.session_state.universal_resize_factor = 1
 
 
 # Title of the main page

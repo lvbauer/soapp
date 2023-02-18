@@ -38,7 +38,10 @@ class MultiPage:
             for idx, page in enumerate(self.pages):
                 page["function"]()
                 if (idx == 0):
-                    st.markdown("###")
+                    st.markdown('#')
+                
+                ## RUN FIRST PAGE ONLY 
+                break
 
         elif st.session_state.first_run_bool == True:
             st.session_state.first_run_bool = False

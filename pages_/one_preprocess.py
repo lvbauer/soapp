@@ -6,16 +6,19 @@ from pcvfunc import *
 from cv2 import cvtColor, COLOR_BGR2RGB, COLOR_RGB2BGR
 
 # Preprocessing functions
-from pages_ import keystone as kstone
-from pages_ import standard
-from pages_ import astrosquare as asq
-
-
+#from pages_ import keystone as kstone
+#from pages_ import standard
+#from pages_ import astrosquare as asq
 
 def app():
 
   session_path = st.session_state.session_path
   session_id = st.session_state.session_id
+
+  # Check if user image
+  if ("user_image_file" not in st.session_state):
+    st.error("No image file selected. Please select image file on page 'Upload Images' then continue here.")
+    st.stop()
 
   user_image = st.session_state.user_image_file
   is_demo = st.session_state.is_demo
@@ -39,12 +42,11 @@ def app():
     #args.image = os.path.join(session_path, user_image.name)
 
   else:
-    file_path = os.path.join(session_path, "arabidopsis_tray.jpg")
-
+    file_path = os.path.join("assets", "arabidopsis_tray.jpg")
 
   st.session_state.session_config["meta"]["session_id"] = st.session_state.session_id
 
-  if (st.session_state.session_id != "None"):
+  if (not st.session_state.is_demo):
     st.session_state.session_config["meta"]["file_name"] = user_image.name
 
   #######################
@@ -54,7 +56,6 @@ def app():
 
   #st.sidebar.header('Enter DNA sequence')
   st.subheader('Image Initialization')
-  st.write("The image you will be working with:")
 
   # Read in input image to PlantCV
   img, path, filename = pcv.readimage(filename=file_path)
@@ -62,14 +63,8 @@ def app():
   # Set image to session variables
   st.session_state.session_data["ori_img"] = img
 
-  # Put heigth, width into variables
-  img_height, img_width = img.shape[0], img.shape[1]
-  img_hypoteneuse = int_hypotenuse(img_height, img_width)
-
   ## Prints img down below
-  #default_img = Image.open(file_path)
   st.image(file_path, use_column_width=True)
-
 
   ## Implement a conditional dropdown for setting a size standard on user image
 
@@ -77,7 +72,6 @@ def app():
   if (("scale_val" in st.session_state.session_config["preprocess"]) and ("scale_val" in st.session_state.session_config["preprocess"])):
     scale_val = st.session_state.session_config["preprocess"]["scale_val"]
     stand_unit = st.session_state.session_config["preprocess"]["stand_unit"]
-
 
   else:
     if (st.session_state.user_config):
@@ -98,10 +92,8 @@ def app():
   #######################
 
   # Interface for choosing preprocessing steps
-
   options_list = [module.rstrip(".py") for module in os.listdir("preprocess")]
   options_list.remove("__pycache__")
-  #print(f"options_list: {options_list}")
 
   # Handle imports
   if ("module_store" not in st.session_state):
@@ -114,12 +106,11 @@ def app():
       st.session_state["module_store"][mod] = importlib.import_module("preprocess." + mod)
 
   # Generate multiselect
+  st.subheader('Select Preprocessing Steps')
+  st.write("Select the set of preprocessing modules you would like to use and configure below. Modules run in order selected.")
   module_multiselect = st.multiselect("Select modules flow.", options_list, format_func=get_name,
                                       default=st.session_state.session_config["preprocess"]["active_list"],
                                       key="module_multiselect", on_change=updateConfig)
-
-  #print(st.session_state.session_config["preprocess"]["active_list"])
-
 
   # Correct images colorspace
   img = cvtColor(img.copy(), COLOR_BGR2RGB)
@@ -128,31 +119,27 @@ def app():
   st.session_state.session_data["work_img"] = img
 
   # Loop through modules and render menus and apply modifications
-  for mod in st.session_state.module_multiselect:
+  for idx, mod in enumerate(st.session_state.module_multiselect):
+    st.subheader(f"Step {idx+1}: {st.session_state.module_store[mod].name()}")
     st.session_state.session_data["work_img"] = st.session_state.module_store[mod].render(st.session_state.session_data["work_img"])
-
-
 
   #######################
   # Set Scale on Image
   #######################
 
   # Call the setStandard functional encapsulation of the scale finder tool
-  if ("size_standard_bool" not in st.session_state) or (st.session_state.size_standard_bool):
-    with st.expander("Scale Standard"):
-      scale_val, stand_unit = standard.setStandard(img, scale_val, stand_unit)
+  #if ("size_standard_bool" not in st.session_state) or (st.session_state.size_standard_bool):
+  #  with st.expander("Scale Standard"):
+  #    scale_val, stand_unit = standard.setStandard(img, scale_val, stand_unit)
 
   #######################
   # Final Image Display
   #######################
 
-  st.subheader("Image After Preprocessing")
+  st.subheader("Final Image")
   st.image(st.session_state.session_data["work_img"])
-
-  ## TODO Change this once there are more preprocessing things to do
-  cvt_image = st.session_state.session_data["work_img"]
-  
-
+ 
+  # Update vlaues
   st.session_state.session_config["preprocess"]["scale_val"] = scale_val
   st.session_state.session_config["preprocess"]["stand_unit"] = stand_unit
   st.session_state.is_demo = is_demo

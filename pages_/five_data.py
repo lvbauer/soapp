@@ -17,7 +17,6 @@ def app():
 
 	# Load in variables
 	session_path = st.session_state.session_path
-	is_demo = st.session_state.is_demo
 
 	if ("args" in st.session_state):
 		args = st.session_state.args
@@ -31,6 +30,9 @@ def app():
 		analysis_run = False
 		st.session_state.analysis_run = analysis_run
 
+	is_demo = st.session_state.is_demo
+	
+	
 	# TODO Change this
 	universal_resize_factor = st.session_state.universal_resize_factor
 	

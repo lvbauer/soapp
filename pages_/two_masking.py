@@ -7,8 +7,14 @@ from cv2 import cvtColor, COLOR_BGR2RGB, COLOR_RGB2BGR
 
 def app():
 
-
 	session_path = st.session_state.session_path
+	
+	# Check that image is not None
+	# Stop if not image found
+	if (st.session_state.session_data["work_img"] is None):
+		st.error("No working image found. Please run 'Preprocessing' then return to this page to continue.")
+		st.stop()
+
 	img = st.session_state.session_data["work_img"]
 	img = cvtColor(img, COLOR_BGR2RGB)
 
@@ -58,8 +64,6 @@ def app():
 
 		# Move variables over
 		if (config):
-			print("config:")
-			print(config)
 			config_mask = config
 		else:
 			config_mask = {}

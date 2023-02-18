@@ -1,21 +1,13 @@
 import streamlit as st
-from plantcv import plantcv as pcv
 import os
+import shutil
 from pcvfunc import *
-from cv2 import cvtColor, COLOR_BGR2RGB, COLOR_RGB2BGR
-
-# Preprocessing functions
-from pages_ import keystone as kstone
-from pages_ import standard
-from pages_ import astrosquare as asq
-
-
+from displayimg import *
 
 def app():
 
   session_path = st.session_state.session_path
   session_id = st.session_state.session_id
-
 
   if (st.session_state.session_id != "None"):
     st.subheader("Image Upload")
@@ -32,9 +24,9 @@ def app():
 
     is_demo = False
   else:
+    # Pretty sure this section is depracated
     st.error("!!! Please Generate a NEW SESSION !!!")
     user_image = None
-    #file_path = os.path.join(session_path, "arabidopsis_tray.jpg")
     st.header("!!! DEMO WORKFLOW !!!")
     is_demo = True
 
@@ -45,29 +37,22 @@ def app():
       st.session_state.user_image_list = sorted(st.session_state.user_image_list, key=lambda x: x.name)
       user_image = st.selectbox("Choose current image:", st.session_state.user_image_list, format_func=lambda x: x.name)
 
+  st.subheader("Use Demo Image")
+  if st.button("Use Demo Image"):
+    is_demo = True
+    shutil.copyfile(os.path.join("assets", "arabidopsis_tray.jpg"), os.path.join(session_path, "arabidopsis_tray.jpg"))
+
+  if (is_demo):
+    st.subheader("Selected Image")
+    st.image(os.path.join("assets", "arabidopsis_tray.jpg"))
+  elif (user_image != None):
+    st.subheader("Selected Image")
+    # Save uploaded image to directory
+    file_path = os.path.join(session_path, user_image.name)
+    with open(file_path, "wb") as f:
+      f.write(user_image.getbuffer())
+    st.image(file_path)
+    
+
   st.session_state.user_image_file = user_image
   st.session_state.is_demo = is_demo
-  #st.session_state.file_path_temp = file_path
-
-
-#  # Behavior if user uploads an image
-#  if user_image != None:
-#    # Assign file path to own variable
-#    file_path = os.path.join(session_path, user_image.name)
-#    st.session_state.user_image_name = user_image.name
-#    
-#    # Save uploaded image to directory
-#    with open(file_path, "wb") as f:
-#      f.write(user_image.getbuffer())
-
-#  elif (is_demo == False):
-#    st.error("Please upload image.")
-#    st.stop()
-#
-#    # Update the image file location to the user uploaded image
-#    args.image = os.path.join(session_path, user_image.name)
-#
-#  st.session_state.session_config["meta"]["session_id"] = st.session_state.session_id
-#
-#  if (st.session_state.session_id != "None"):
-#    st.session_state.session_config["meta"]["file_name"] = user_image.name

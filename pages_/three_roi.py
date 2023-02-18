@@ -7,13 +7,20 @@ import numpy as np
 from cv2 import drawContours, resize, line, putText, FONT_HERSHEY_DUPLEX, cvtColor, COLOR_BGR2RGB
 from displayimg import *
 
-
+NCOL_MAX = 100
+NROW_MAX = 100
 
 def app():
 
 	###########################
 	# Measure Individual Plants
 	###########################
+
+	# Check that image is not None
+	# Stop if not image found
+	if (st.session_state.session_data["work_img"] is None):
+		st.error("No working image found. Please run 'Preprocessing' then return to this page to continue.")
+		st.stop()
 
 	# Get the image variable from data
 	img = st.session_state.session_data["work_img"]
@@ -60,8 +67,8 @@ def app():
 	col1, col2, col3 = st.columns(3)
 
 	with col1:
-		nrows_input = int(st.number_input("Number of Rows:", min_value=1, max_value=10, value=int(nrows), step=1, key="nrows", on_change=update_config))
-		ncols_input = int(st.number_input("Number of Columns:", min_value=1, max_value=10, value=int(ncols), step=1, key="ncols", on_change=update_config))
+		nrows_input = int(st.number_input("Number of Rows:", min_value=1, max_value=NCOL_MAX, value=int(nrows), step=1, key="nrows", on_change=update_config))
+		ncols_input = int(st.number_input("Number of Columns:", min_value=1, max_value=NROW_MAX, value=int(ncols), step=1, key="ncols", on_change=update_config))
 		radius_val_input = int(st.number_input("ROI Radius:", min_value=1, max_value=int(img_hypoteneuse), value=int(radius_val), step=1, key="radius_val", on_change=update_config))
 
 	nrows = update_val(nrows, nrows_input)

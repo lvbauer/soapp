@@ -13,13 +13,17 @@ import time, copy
 def app():
 
 	# Unpack values from storage
-	rois = st.session_state.session_data["rois"]
-	roi_hierarchy = st.session_state.session_data["roi_hierarchy"]
-	plant_tuples = st.session_state.session_data["plant_tuples"]
-	plant_name_list = st.session_state.session_data["plant_name_list"]
-	bin_mask = st.session_state.session_data["bin_mask"]
-	img_text_vars = st.session_state.session_data["img_text_vars"]
-	
+	try:
+		rois = st.session_state.session_data["rois"]
+		roi_hierarchy = st.session_state.session_data["roi_hierarchy"]
+		plant_tuples = st.session_state.session_data["plant_tuples"]
+		plant_name_list = st.session_state.session_data["plant_name_list"]
+		bin_mask = st.session_state.session_data["bin_mask"]
+		img_text_vars = st.session_state.session_data["img_text_vars"]
+	except KeyError:
+		st.error("Missing required steps. Please run previous pages then continue here.")
+		st.stop()
+		
 	# Unpack and convert image values	
 	img = st.session_state.session_data["work_img"]
 	img = cvtColor(img, COLOR_BGR2RGB)
@@ -81,7 +85,7 @@ def app():
 	img_copy = np.copy(img)
 
 	# Initialize empty list for removing plant names that cannot be measured
-	plant_name_list_copy = []
+	#plant_name_list_copy = []
 
 	# Variable with pool to track if analysis was done on reload
 	analysis_run = False
@@ -110,8 +114,8 @@ def app():
 		pcv.outputs.clear()
 
 		# Create a copy of plant_name_list list to remove items from if not measured, area = 0
-		if (plant_name_list != []):
-			plant_name_list_copy = copy.copy(plant_name_list)
+		#if (plant_name_list != []):
+			#plant_name_list_copy = copy.copy(plant_name_list)
 
 		# Clear out all color analysis histograms
 		hist_file_start = "color_analysis_plant"
