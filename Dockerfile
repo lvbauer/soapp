@@ -14,5 +14,10 @@ COPY . .
 COPY pages_/ ./pages_/
 COPY helpers/ ./helpers/
 
+# Copy the sessionkeeping script into cron.hourly
+# Removes session directories older than 3 days from the session directory
+COPY sessionkeep /etc/cron.hourly/sessoinkeep
+
+
 # Run application 
 CMD sudo streamlit run app.py
