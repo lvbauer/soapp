@@ -5,7 +5,7 @@ import numpy as np
 import shutil
 import cv2
 import os
-
+import importlib
 
 def app():
 
@@ -13,7 +13,6 @@ def app():
 	session_path = st.session_state.session_path
 	session_id = st.session_state.session_id
 
-	color_analysis_check = st.checkbox("Color Analysis", value=True)
 	bulk_path = os.path.join(session_path, "bulk_process")
 
 	zip_name = os.path.join(session_path ,f"{session_id}_bulk")
@@ -23,7 +22,7 @@ def app():
 
 		# Remove old bulk run path to avoid conflict
 		if os.path.isdir(bulk_path):
-			os.rmdir(bulk_path)
+			shutil.rmtree(bulk_path)
 		
 		# Prep the multirun environment
 		os.mkdir(bulk_path)
@@ -51,9 +50,24 @@ def app():
 
 			working_image = original_image
 			
-			# Loop through mods in active list and apply them to the working image using the 'work' function
+			# Initialize module_store if not in session_state
+			if ("module_store" not in st.session_state):
+				# Interface for choosing preprocessing steps
+				options_list = [module.rstrip(".py") for module in os.listdir("preprocess")]
+				options_list.remove("__pycache__")
+
+				# Handle imports
+				st.session_state["module_store"] = {}
+
+				# Main import loop
+				# Imports modules into "module_store" session state variable
+				for mod in options_list:
+					if mod not in st.session_state["module_store"].keys():
+						st.session_state["module_store"][mod] = importlib.import_module("preprocess." + mod)
+
+			# Loop through mods in active list and apply them to the working image using the 'work' function			
 			for mod in st.session_state.session_config["preprocess"]["active_list"]:
-				working_image = st.session_state["module_store"][mod].work(working_image, st.session_state.session_config["preprocess"][mod])
+				working_image = st.session_state.module_store[mod].work(working_image, st.session_state.session_config["preprocess"]["modules"][mod])
 
 
 			# 2: Masking
@@ -196,24 +210,34 @@ def app():
 													  mask=plant_mask, 
 													  label=f"plant{plant_id}")
 				
-						if (color_analysis_check):
-								# Analyze color of each seed
-								#
-								# Inputs:
-								#	 img - rgb image
-								#	 obj - seed
-								#	 hist_plot_type - 'all', or None for no histogram plot
-								#	 label - 'default'			
-								color_img = pcv.analyze_color(rgb_img=img_copy, 
-															  mask=plant_mask, 
-															  hist_plot_type=None, 
-															  label=f"plant{plant_id}_color")
+						if (st.session_state.session_config["analysis"]["color"]):
+							# Analyze color of each seed
+							#
+							# Inputs:
+							#	 img - rgb image
+							#	 obj - seed
+							#	 hist_plot_type - 'all', or None for no histogram plot
+							#	 label - 'default'			
+							color_img = pcv.analyze_color(rgb_img=img_copy, 
+															mask=plant_mask, 
+															hist_plot_type=None, 
+															label=f"plant{plant_id}_color")
 
-								# Save image for every color analysis
-								pcv.print_image(
-									color_img, 
-									os.path.join(img_dir_path, f"{img_name}_color_analysis_plant{i}.png")
-									)
+							# Save image for every color analysis
+							pcv.print_image(
+								color_img, 
+								os.path.join(img_dir_path, f"{img_name}_color_analysis_plant{i}.png")
+								)
+						
+						if (st.session_state.session_config["analysis"]["watershed"]):
+							# Run Watershed Segmentation Analysis
+							analysis_images = pcv.watershed_segmentation(
+								rgb_img=img_copy,
+								mask=plant_mask,
+								distance=st.session_state.session_config["analysis"]["watershed_distance"],
+								label=f"plant{i}_watershed"
+								)
+							pass
 
 
 				else:

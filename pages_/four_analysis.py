@@ -28,10 +28,17 @@ def app():
 	img = st.session_state.session_data["work_img"]
 	img = cvtColor(img, COLOR_BGR2RGB)
 
-
 	# Get values from unpacked values
 	img_height, img_width = img.shape[0], img.shape[1]
 	session_path = st.session_state.session_path
+
+	# Initialize analysis bool dictionary
+	if ("color" not in st.session_state.session_config["analysis"]):
+		st.session_state.session_config["analysis"]["color"] = False
+	
+	if ("watershed" not in st.session_state.session_config["analysis"]):
+		st.session_state.session_config["analysis"]["watershed"] = False
+		st.session_state.session_config["analysis"]["watershed_distance"] = 10
 
 
 	# Build up the PlantCV environment
@@ -50,25 +57,23 @@ def app():
 	# Set debug to the global parameter 
 	pcv.params.debug = args.debug
 
-	# Render sidebar with options for analysis
-	if st.session_state.first_run_bool == False:
-		with st.sidebar:
-			st.subheader("Analysis Options:")
+	# Render analysis options for analysis
+	st.subheader("Analysis Options:")
 
-			# Checkbox for writing plant namesz on the final analysis image
-			analysis_img_write = st.checkbox("Write Labels on Image", value=True)
+	# Checkbox for writing plant namesz on the final analysis image
+	analysis_img_write = st.checkbox("Write Labels on Image", value=True)
 
-			# Checkboxes for other options
-			color_analysis_check = st.checkbox("Run Color Analysis", value=False)
-			watershed_analysis_check = st.checkbox("Run Watershed Segmentation Analysis", value=False)
+	# Checkboxes for other options
+	color_analysis_check = st.checkbox("Run Color Analysis", value=st.session_state.session_config["analysis"]["color"], 
+										key="color_check_input", on_change=update_config)
+	watershed_analysis_check = st.checkbox("Run Watershed Segmentation Analysis", value=st.session_state.session_config["analysis"]["watershed"],
+										key="watershed_check_input", on_change=update_config)
 
+	if (st.session_state.session_config["analysis"]["watershed"]):
+		watershed_distance = st.number_input(label="Set Minimum Distance of Local Maximum for Segmentation Analysis", 
+			min_value=1, max_value=None, step=1, value=st.session_state.session_config["analysis"]["watershed_distance"], key="watershed_distance_input")
 
 	st.header("Analysis")
-	if st.session_state.first_run_bool == False:
-		if (watershed_analysis_check):
-			watershed_distance = int(st.number_input(label="Set Minimum Distance of Local Maximum for Segmentation Analysis",
-				min_value=1, max_value=None, value=10, step=1))
-
 	# Inputs:
 	#   start = beginning value for range
 	#   stop  = ending value for range (exclusive)
@@ -87,15 +92,10 @@ def app():
 	# Initialize empty list for removing plant names that cannot be measured
 	#plant_name_list_copy = []
 
-	# Variable with pool to track if analysis was done on reload
-	analysis_run = False
 
 	## Button for analysis
 	results_json = None
 	if st.button("Run Analysis"):
-
-		# Set bool of analysis run
-		analysis_run = True
 
 		# Start time of the analysis
 		analysis_start = time.time()
@@ -172,8 +172,8 @@ def app():
 														  mask=plant_mask, 
 														  label=f"plant{plant_id}")
 				
-						if (color_analysis_check):
-							# Analyze color of each seed
+						if (st.session_state.session_config["analysis"]["color"]):
+							# Analyze color of each object
 							#
 							# Inputs:
 							#	 img - rgb image
@@ -189,12 +189,12 @@ def app():
 							pcv.print_image(color_img, os.path.join(session_path, f"color_analysis_plant{i}.png"))
 
 
-						if (watershed_analysis_check):
+						if (st.session_state.session_config["analysis"]["watershed"] ):
 							# Run Watershed Segmentation Analysis
 							analysis_images = pcv.watershed_segmentation(
 								rgb_img=img,
 								mask=plant_mask,
-								distance=watershed_distance,
+								distance=st.session_state.session_config["analysis"]["watershed_distance"],
 								label=f"plant{i}_watershed"
 								)
 
@@ -256,3 +256,14 @@ def app():
 
 
 	st.session_state.args = args
+
+
+def update_config():
+	# Update color analysis bool
+	st.session_state.session_config["analysis"]["color"] = st.session_state["color_check_input"]
+
+	# Update Watershed segmentation info
+	st.session_state.session_config["analysis"]["watershed"] = st.session_state["watershed_check_input"]
+	
+	if ("watershed_distance_input" in st.session_state):
+		st.session_state.session_config["analysis"]["watershed_distance"] = st.session_state["watershed_distance_input"]

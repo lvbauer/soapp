@@ -21,25 +21,22 @@ def app():
     # Handle sessionID
     ######################
 
-
-    st.subheader("Session")
-
-    st.caption("To begin your session, click Generate New Session.")
-
-
     # Generate new session automatically
     if (st.session_state.first_run_bool):
       st.session_state.session_id = set_hash_val()
       st.session_state.session_obj_bool = False
     
-    # Display current session ID sessionID available
-    st.write("Current Session ID:")
-    st.code(st.session_state.session_id)
-        
-    #### Return to function here
-    if st.button("Generate New Session"):
-      st.session_state.session_id = set_hash_val()
-      st.session_state.session_obj_bool = False
+    # Session information in expander to make room for intro text
+    with st.expander("Session Information"):
+      
+      # Display current session ID sessionID available
+      st.write("Current Session ID:")
+      st.code(st.session_state.session_id)
+          
+      #### Return to function here
+      if st.button("Generate New Session"):
+        st.session_state.session_id = set_hash_val()
+        st.session_state.session_obj_bool = False
 
     # Store current session in the input field
     #hash_val_update = st.text_input("Change Session ID", value=st.session_state["session_id"], 

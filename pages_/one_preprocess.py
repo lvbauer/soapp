@@ -5,11 +5,6 @@ import importlib
 from pcvfunc import *
 from cv2 import cvtColor, COLOR_BGR2RGB, COLOR_RGB2BGR
 
-# Preprocessing functions
-#from pages_ import keystone as kstone
-#from pages_ import standard
-#from pages_ import astrosquare as asq
-
 def app():
 
   session_path = st.session_state.session_path

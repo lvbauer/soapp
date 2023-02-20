@@ -1,7 +1,7 @@
 import streamlit as st
 import numpy as np
 
-CONFIG_NAME = "crop_image"
+CONFIG_NAME = "cropimg"
 
 def name():
     return "Crop Image"
