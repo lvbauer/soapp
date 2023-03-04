@@ -5,7 +5,6 @@ from helpers.displayimg import *
 from helpers import pcvconvert
 from pandas import read_csv
 
-
 def app():
 
 	# Load in variables
