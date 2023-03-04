@@ -1,8 +1,8 @@
 import streamlit as st
 from os import path
 from plantcv import plantcv as pcv
-from displayimg import st_display_image
-from pcvfunc import update_val
+from helpers.displayimg import st_display_image
+from helpers.pcvfunc import update_val
 import copy
 
 class step2_masking:
