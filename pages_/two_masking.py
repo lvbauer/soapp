@@ -1,7 +1,6 @@
 import streamlit as st
 import os
 from helpers.displayimg import *
-#from pcvdl import download_all
 from cv2 import cvtColor, COLOR_BGR2RGB
 
 def app():
@@ -122,8 +121,8 @@ def app():
 								key="obj_color_0", on_change=update_config)
 
 			# colorspace inputs
-			thresh_slide = st.slider('Threshold', min_value=0, max_value=255, value=thresh_val, step=1, on_change=update_config, key="thresh_slider_0")
-			max_val_slide = st.slider('Max Value', min_value=0, max_value=255, value=max_val, step=1, on_change=update_config, key="max_slider_0")
+			thresh_slide = st.number_input('Threshold', min_value=0, max_value=255, value=thresh_val, step=1, on_change=update_config, key="thresh_slider_0")
+			max_val_slide = st.number_input('Max Value', min_value=0, max_value=255, value=max_val, step=1, on_change=update_config, key="max_slider_0")
 
 			# Update the values
 			thresh_val = update_val(thresh_val, thresh_slide)
@@ -211,8 +210,8 @@ def app():
 
 
 				# colorspace inputs
-				thresh_slide = st.slider('Threshold', min_value=0, max_value=255, value=channel_dict['thresh_val'], step=1, key=f"thresh_slider_{idx}", on_change=update_config)
-				max_val_slide = st.slider('Max Value', min_value=0, max_value=255, value=channel_dict['max_val'], step=1, key=f"max_slider_{idx}", on_change=update_config)
+				thresh_slide = st.number_input('Threshold', min_value=0, max_value=255, value=channel_dict['thresh_val'], step=1, key=f"thresh_slider_{idx}", on_change=update_config)
+				max_val_slide = st.number_input('Max Value', min_value=0, max_value=255, value=channel_dict['max_val'], step=1, key=f"max_slider_{idx}", on_change=update_config)
 
 				# Update the values
 				channel_dict['thresh_val'] = update_val(channel_dict['thresh_val'], thresh_slide)
@@ -277,7 +276,7 @@ def app():
 
 
 		st.subheader("Cleaned Image")
-		clean_fill_slider = st.slider('Size (# px) of object to clean up:', min_value=0, max_value=2000, value=clean_fill_value, step=1, key="clean_fill_val", on_change=update_config)
+		clean_fill_slider = st.number_input('Size (# px) of object to clean up:', min_value=0, max_value=2000, value=clean_fill_value, step=1, key="clean_fill_val", on_change=update_config)
 		clean_fill_value = update_val(clean_fill_value, clean_fill_slider)
 		try:
 			fill_image = pcv.fill(bin_img=raw_thresh, size=clean_fill_value)
@@ -367,13 +366,6 @@ def update_config():
 	for key, val in enumerate(st.session_state.session_config["masking"]["otsu"]):
 		if (f"otsu_{key}" in st.session_state):
 			st.session_state.session_config["masking"]["otsu"][key] = st.session_state[f"otsu_{key}"]
-
-
-	#print("session_config:")
-	#print(st.session_state.session_config["masking"])
-
-
-
 
 def update_obj_color(key):
 	if f"obj_color_{key}" in st.session_state:

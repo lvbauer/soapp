@@ -3,7 +3,6 @@ from os import path
 from plantcv import plantcv as pcv
 from helpers.displayimg import st_display_image
 from helpers.pcvfunc import update_val
-import copy
 
 class step2_masking:
 
