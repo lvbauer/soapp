@@ -164,3 +164,6 @@ session/*
 
 # Hidden Files
 .*
+
+# Ignore pyc files
+*.pyc
