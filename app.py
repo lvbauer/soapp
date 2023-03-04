@@ -6,7 +6,7 @@ import json
 from multipage import MultiPage
 from pages_ import landing_page, zero_upload, one_preprocess, two_masking, three_roi, four_analysis, five_data, six_ht
 
-@st.cache
+@st.cache_resource
 def make_sessions_dir():
   if (not os.path.isdir("session")):
     os.mkdir("session")
