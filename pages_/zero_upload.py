@@ -1,8 +1,7 @@
 import streamlit as st
 import os
 import shutil
-from pcvfunc import *
-from displayimg import *
+from helpers.displayimg import *
 
 def app():
 

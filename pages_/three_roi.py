@@ -1,11 +1,10 @@
 import streamlit as st
 from plantcv import plantcv as pcv
 import os
-from pcvfunc import *
-from pcvdl import download_all
+from helpers import pcvfunc as pcvf
 import numpy as np
-from cv2 import drawContours, resize, line, putText, FONT_HERSHEY_DUPLEX, cvtColor, COLOR_BGR2RGB
-from displayimg import *
+from cv2 import drawContours, putText, FONT_HERSHEY_DUPLEX, cvtColor, COLOR_BGR2RGB
+from helpers.displayimg import *
 
 NCOL_MAX = 100
 NROW_MAX = 100
@@ -29,7 +28,7 @@ def app():
 	
 	# Put heigth, width into variables
 	img_height, img_width = img.shape[0], img.shape[1]
-	img_hypoteneuse = int_hypotenuse(img_height, img_width)
+	img_hypoteneuse = pcvf.int_hypotenuse(img_height, img_width)
 	session_path = st.session_state.session_path
 
 

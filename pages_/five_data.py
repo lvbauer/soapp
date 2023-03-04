@@ -1,9 +1,7 @@
 import streamlit as st
 import os
-from pcvfunc import *
-from pcvdl import download_all
-import numpy as np
-from displayimg import *
+from helpers.pcvdl import download_all
+from helpers.displayimg import *
 from helpers import pcvconvert
 from pandas import read_csv
 

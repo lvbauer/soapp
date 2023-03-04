@@ -1,5 +1,5 @@
 import streamlit as st
-from pcvfunc import *
+from helpers import pcvfunc as pcvf
 import os
 
 
@@ -23,7 +23,7 @@ def app():
 
     # Generate new session automatically
     if (st.session_state.first_run_bool):
-      st.session_state.session_id = set_hash_val()
+      st.session_state.session_id = pcvf.set_hash_val()
       st.session_state.session_obj_bool = False
     
     # Session information in expander to make room for intro text
@@ -35,15 +35,8 @@ def app():
           
       #### Return to function here
       if st.button("Generate New Session"):
-        st.session_state.session_id = set_hash_val()
+        st.session_state.session_id = pcvf.set_hash_val()
         st.session_state.session_obj_bool = False
-
-    # Store current session in the input field
-    #hash_val_update = st.text_input("Change Session ID", value=st.session_state["session_id"], 
-    #                                help="Paste Session ID here and press 'Enter'.",
-    #                                key="session_id_input",
-    #                                on_change=updateSession)
-
 
     ## Set the session path
     st.session_state.session_path = os.path.join(".", "session", str(st.session_state.session_id))

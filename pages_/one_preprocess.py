@@ -2,13 +2,11 @@ import streamlit as st
 from plantcv import plantcv as pcv
 import os
 import importlib
-from pcvfunc import *
-from cv2 import cvtColor, COLOR_BGR2RGB, COLOR_RGB2BGR
+from cv2 import cvtColor, COLOR_BGR2RGB
 
 def app():
 
   session_path = st.session_state.session_path
-  session_id = st.session_state.session_id
 
   # Check if user image
   if ("user_image_file" not in st.session_state):
@@ -111,15 +109,6 @@ def app():
   for idx, mod in enumerate(st.session_state.module_multiselect):
     st.subheader(f"Step {idx+1}: {st.session_state.module_store[mod].name()}")
     st.session_state.session_data["work_img"] = st.session_state.module_store[mod].render(st.session_state.session_data["work_img"])
-
-  #######################
-  # Set Scale on Image
-  #######################
-
-  # Call the setStandard functional encapsulation of the scale finder tool
-  #if ("size_standard_bool" not in st.session_state) or (st.session_state.size_standard_bool):
-  #  with st.expander("Scale Standard"):
-  #    scale_val, stand_unit = standard.setStandard(img, scale_val, stand_unit)
 
   #######################
   # Final Image Display
