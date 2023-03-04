@@ -7,28 +7,21 @@ from displayimg import *
 def app():
 
   session_path = st.session_state.session_path
-  session_id = st.session_state.session_id
 
-  if (st.session_state.session_id != "None"):
-    st.subheader("Image Upload")
-    if "user_image_list" not in st.session_state:
-      st.session_state.user_image_list = st.file_uploader("Picture to analyze:", type=["png","jpg","tiff", "tif","jpeg"], accept_multiple_files=True, key="file_uploader")
-    else:
-      #st.session_state.user_image_list.extend(st.file_uploader("Picture to analyze:", type=["png","jpg","tiff", "tif","jpeg"], accept_multiple_files=True, key="file_uploader"))
-      user_image_temp = st.file_uploader("Picture to analyze:", type=["png","jpg","tiff", "tif","jpeg"], accept_multiple_files=True, key="file_uploader")
-      user_image_name_list = [usr_image.name for usr_image in st.session_state.user_image_list]
-
-      for uploader_image in user_image_temp:
-        if uploader_image.name not in user_image_name_list:
-          st.session_state.user_image_list.append(uploader_image)
-
-    is_demo = False
+  st.subheader("Image Upload")
+  if "user_image_list" not in st.session_state:
+    st.session_state.user_image_list = st.file_uploader("Picture to analyze:", type=["png","jpg","tiff", "tif","jpeg"], accept_multiple_files=True, key="file_uploader")
   else:
-    # Pretty sure this section is depracated
-    st.error("!!! Please Generate a NEW SESSION !!!")
-    user_image = None
-    st.header("!!! DEMO WORKFLOW !!!")
-    is_demo = True
+    #st.session_state.user_image_list.extend(st.file_uploader("Picture to analyze:", type=["png","jpg","tiff", "tif","jpeg"], accept_multiple_files=True, key="file_uploader"))
+    user_image_temp = st.file_uploader("Picture to analyze:", type=["png","jpg","tiff", "tif","jpeg"], accept_multiple_files=True, key="file_uploader")
+    user_image_name_list = [usr_image.name for usr_image in st.session_state.user_image_list]
+
+    for uploader_image in user_image_temp:
+      if uploader_image.name not in user_image_name_list:
+        st.session_state.user_image_list.append(uploader_image)
+
+  is_demo = False
+
 
   if (not is_demo):
     if (len(st.session_state.user_image_list) == 1):
