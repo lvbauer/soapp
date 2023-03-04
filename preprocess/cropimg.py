@@ -2,9 +2,10 @@ import streamlit as st
 import numpy as np
 
 CONFIG_NAME = "cropimg"
+MODULE_NAME = "Crop Image"
 
 def name():
-    return "Crop Image"
+    return MODULE_NAME
 
 def render(image):
     """

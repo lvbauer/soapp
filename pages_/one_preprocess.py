@@ -48,8 +48,6 @@ def app():
   # Initial Image Read In
   #######################
 
-
-  #st.sidebar.header('Enter DNA sequence')
   st.subheader('Image Initialization')
 
   # Read in input image to PlantCV
@@ -77,10 +75,6 @@ def app():
     else:
       scale_val = -1
       stand_unit = ""
-
-      # Set the default values for module booleans
-      st.session_state.size_standard_bool = False
-      st.session_state.kstone_bool = False
   
   #######################
   # Image PreProcessing

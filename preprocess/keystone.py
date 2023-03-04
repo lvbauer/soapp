@@ -4,9 +4,10 @@ import numpy as np
 import cv2
 
 CONFIG_NAME = "keystone"
+MODULE_NAME = "Keystone Correction"
 
 def name():
-    return "Keystone Correction"
+    return MODULE_NAME
 
 def render(image):
 
@@ -30,8 +31,8 @@ def render(image):
 
     # Calculate necessary values
     short_side_val = getShortSide(image.shape)
-    half_short = short_side_val // 2
-    scale_step = short_side_val // 100
+    #half_short = short_side_val // 2
+    #scale_step = short_side_val // 100
     circle_size = short_side_val // 100
 
     # Copy working image
@@ -107,9 +108,9 @@ def default_config(image):
 
     # Calculate values
     short_side_val = getShortSide(image.shape)
-    half_short = short_side_val // 2
+    #half_short = short_side_val // 2
     scale_step = short_side_val // 100
-    circle_size = short_side_val // 100
+    #circle_size = short_side_val // 100
 
     # Get image dimensions
     img_h, img_w, img_depth = image.shape 

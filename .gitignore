@@ -161,3 +161,6 @@ cython_debug/
 
 # Session file created on application run, not needed here
 session/*
+
+# Hidden Files
+.*
