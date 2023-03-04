@@ -98,8 +98,6 @@ def work(image, config):
         marker_ids = config["marker_ids"]
         marker_dict = config["marker_dict"]
 
-    print(marker_dict)
-
     # Scale finding work
     scale_val = adj.get_scale(
         image=image, 

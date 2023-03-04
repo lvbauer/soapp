@@ -158,9 +158,6 @@ def work(image, config):
 
 	# Do work based on correction method selected
 	method = config["correction_method"]
-	
-	print("method", method)
-	print("dict", config["marker_dict"])
 
 	# Maintain Correction Method
 	if (method == "MAINTAIN"):
