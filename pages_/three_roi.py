@@ -9,6 +9,10 @@ from helpers.displayimg import *
 NCOL_MAX = 100
 NROW_MAX = 100
 
+NCOL_DEFAULT = 2
+NROW_DEFAULT = 2
+ROI_RADIUS_DEFAULT = 200
+
 def app():
 
 	###########################
@@ -49,15 +53,15 @@ def app():
 
 	## Adjust Number of Rows and Columns for Analysis
 	if (config_bool):
-		nrows = 4
-		ncols = 5
+		nrows = NROW_DEFAULT
+		ncols = NCOL_DEFAULT
 	else:
 		nrows = st.session_state.session_config["roi"]["nrows"]
 		ncols = st.session_state.session_config["roi"]["ncols"]
 
 	## Adjust ROI size
 	if (config_bool):
-		radius_val = 200
+		radius_val = ROI_RADIUS_DEFAULT
 	else:
 		radius_val = st.session_state.session_config["roi"]["radius_val"]
 	

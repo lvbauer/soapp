@@ -124,7 +124,12 @@ def render(image):
 	st.session_state.session_config["preprocess"]["modules"][CONFIG_NAME] = working_config
 
 	# 4| Run preprocessing operation
-	output_image = work(image, working_config)
+	try:
+		output_image = work(image, working_config)
+	except TypeError as err:
+		st.error("Encountered problems with marker detection.")
+		st.error(f"Message: {err}")
+		st.stop()
 
 	# Display image
 	st.write("Frame Adjusted Image")
@@ -215,7 +220,7 @@ def work(image, config):
 		)
 
 	else:
-		st.warning("Method not found.")
+		st.error("Method not found.")
 		st.stop()
 		
 
@@ -326,6 +331,12 @@ def order_aruco_clockwise(ids, marker_centers, card_id=0, normal_id=1):
 	
 	"""
 	
+	# Check that there are points
+	if (len(ids) == 0):
+		raise ValueError("No markers detected.")
+	elif (len(ids) < 4):
+		raise ValueError(f"Could not find sufficient marker IDs. IDs: {ids}")
+
 	# Make main list
 	point_id_list = list(zip(ids, marker_centers))
 	

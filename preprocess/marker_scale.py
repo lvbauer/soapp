@@ -7,6 +7,11 @@ from preprocess import frame_adjust as adj
 CONFIG_NAME = "marker_find_scale"
 MODULE_NAME = "Marker Scale Finder"
 
+#### Help Messages
+
+USE_FRAME_ADJ_HELP = """If Preprocess Module 'Marker Frame Adjust' is used prior to this module, the same marker dictionary and marker IDs will be used in this module.
+                        Note: This overrides dictionary and marker IDs specified below."""
+
 #### Standard Functions
 
 def name():
@@ -32,7 +37,7 @@ def render(image):
 
     # Use settings from marker_adjust
     user_use_frame_adj = st.checkbox("Use Settings from Marker Frame Adjust", value=working_config["use_frame_adjust"], 
-                                     key="marker_scale_use_adj", on_change=updateConfig)
+                                     key="marker_scale_use_adj", on_change=updateConfig, help=USE_FRAME_ADJ_HELP)
 
     # Main parameters
     user_dictionary = st.selectbox("Choose marker dictionary:", adj.ARUCO_DICT_LIST, 
