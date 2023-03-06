@@ -35,8 +35,6 @@ def app():
 	img_hypoteneuse = pcvf.int_hypotenuse(img_height, img_width)
 	session_path = st.session_state.session_path
 
-
-
 	# Section header
 	st.subheader("Set Regions of Interest (ROIs)")
 
@@ -100,8 +98,8 @@ def app():
 
 	# Sliders: 1) General spacing, 2) Buffer adjustment
 	with col2:
-		buffer_height_adjust = int(st.number_input("Vertical Alignment", min_value=1, max_value=int(img_height*10), value=int(buffer_height), step=1, key="buffer_h", on_change=update_config))
-		buffer_width_adjust = int(st.number_input("Horizontal Alignment", min_value=1, max_value=int(img_width*10), value=int(buffer_width), step=1, key="buffer_w", on_change=update_config))
+		buffer_height_adjust = int(st.number_input("Vertical Alignment", min_value=1, max_value=int(img_height), value=int(buffer_height), step=1, key="buffer_h", on_change=update_config))
+		buffer_width_adjust = int(st.number_input("Horizontal Alignment", min_value=1, max_value=int(img_width), value=int(buffer_width), step=1, key="buffer_w", on_change=update_config))
 
 	buffer_height = update_val(buffer_height, buffer_height_adjust)
 	buffer_width = update_val(buffer_width, buffer_width_adjust)
@@ -149,10 +147,6 @@ def app():
 	img_copy_rois = np.copy(img)
 	for roi_contour in rois:
 		drawContours(img_copy_rois, roi_contour, -1, (255, 0, 255), 10)
-
-		#if (plant_label_check):
-		#	putText(img_copy_rois, "sample-text", tuple(roi_contour[0][200][0]), FONT_HERSHEY_DUPLEX,
-		#			2, (255, 255, 255), 8)
 
 	#######################
 	# Add Names to Samples
@@ -213,9 +207,6 @@ def app():
 		st.subheader("Plant Sample Notes")
 		st.write("Plants are commented on row-by-row from top to bottom and left to right.")
 
-
-		#plant_notes_list = [None] * num_rois
-
 		# Create list of plant names with user input
 		for idx, value in enumerate(plant_notes_list):
 			if (plant_notes_list == []):
@@ -238,22 +229,6 @@ def app():
 
 	# Run to update values even if nothing is changed
 	update_config()
-
-	#st.session_state.session_config["roi"]["name_list"] = st.session_state.session_data["plant_name_list"]
-
-	#print(st.session_state.session_config["roi"]["name_list"])
-
-	# Set session_config
-	#st.session_state.session_config["roi"]["nrows"] = nrows
-	#st.session_state.session_config["roi"]["ncols"] = ncols
-	#st.session_state.session_config["roi"]["radius_val"] = radius_val
-	#st.session_state.session_config["roi"]["buffer_height"] = buffer_height
-	#st.session_state.session_config["roi"]["buffer_width"] = buffer_width
-	#st.session_state.session_config["roi"]["space_height"] = space_height
-	#st.session_state.session_config["roi"]["space_width"] = space_width
-	#st.session_state.session_config["roi"]["name_list"] = plant_name_list
-	#st.session_state.session_config["roi"]["plant_notes_list"] = plant_notes_list
-
 
 def update_config():
 
