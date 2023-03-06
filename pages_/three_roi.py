@@ -232,32 +232,14 @@ def app():
 
 def update_config():
 
-	if "nrows" in st.session_state:
-		st.session_state.session_config["roi"]["nrows"] = st.session_state.nrows
-
-	if "ncols" in st.session_state:
-		st.session_state.session_config["roi"]["ncols"] = st.session_state.ncols
-
-	if "radius_val" in st.session_state:
-		st.session_state.session_config["roi"]["radius_val"] = st.session_state.radius_val
-
-	if "buffer_h" in st.session_state:
-		st.session_state.session_config["roi"]["buffer_height"] = st.session_state.buffer_h
-		
-	if "buffer_w" in st.session_state:
-		st.session_state.session_config["roi"]["buffer_width"] = st.session_state.buffer_w
-		
-	if "spacer_h" in st.session_state:
-		st.session_state.session_config["roi"]["space_height"] = st.session_state.spacer_h
-		
-	if "spacer_w" in st.session_state:
-		st.session_state.session_config["roi"]["space_width"] = st.session_state.spacer_w
-
+	st.session_state.session_config["roi"]["nrows"] = st.session_state.nrows
+	st.session_state.session_config["roi"]["ncols"] = st.session_state.ncols
+	st.session_state.session_config["roi"]["radius_val"] = st.session_state.radius_val
+	st.session_state.session_config["roi"]["buffer_height"] = st.session_state.buffer_h
+	st.session_state.session_config["roi"]["buffer_width"] = st.session_state.buffer_w
+	st.session_state.session_config["roi"]["space_height"] = st.session_state.spacer_h
+	st.session_state.session_config["roi"]["space_width"] = st.session_state.spacer_w
 	num_plants = int(st.session_state.nrows * st.session_state.ncols)
-
-	if "name_list" in st.session_state:
-		plant_name_len = len(st.session_state.session_config["roi"]["name_list"])
-		plant_notes_len = len(st.session_state.session_config["roi"]["plant_notes_list"])
 
 	plant_name_list_temp = [None] * num_plants
 	plant_note_list_temp = [None] * num_plants
