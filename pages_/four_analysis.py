@@ -6,8 +6,6 @@ from cv2 import resize, putText, FONT_HERSHEY_DUPLEX, cvtColor, COLOR_BGR2RGB
 from helpers.displayimg import *
 import time
 
-
-
 def app():
 
 	# Unpack values from storage
@@ -69,7 +67,7 @@ def app():
 
 	if (st.session_state.session_config["analysis"]["watershed"]):
 		watershed_distance = st.number_input(label="Set Minimum Distance of Local Maximum for Segmentation Analysis", 
-			min_value=1, max_value=None, step=1, value=st.session_state.session_config["analysis"]["watershed_distance"], key="watershed_distance_input")
+			min_value=1, max_value=None, step=1, value=st.session_state.session_config["analysis"]["watershed_distance"], key="watershed_distance_input", on_change=update_config)
 
 	st.header("Analysis")
 	# Inputs:
@@ -86,10 +84,6 @@ def app():
 	# Inputs:
 	#   img = rgb image
 	img_copy = np.copy(img)
-
-	# Initialize empty list for removing plant names that cannot be measured
-	#plant_name_list_copy = []
-
 
 	## Button for analysis
 	results_json = None

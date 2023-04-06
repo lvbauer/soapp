@@ -3,6 +3,8 @@ import os
 import shutil
 from helpers.displayimg import *
 
+DEFAULT_IMAGE_PATH = os.path.join("assets", "arabidopsis_tray.jpg")
+
 def app():
 
   session_path = st.session_state.session_path
@@ -32,7 +34,7 @@ def app():
   st.subheader("Use Demo Image")
   if st.button("Use Demo Image"):
     is_demo = True
-    shutil.copyfile(os.path.join("assets", "arabidopsis_tray.jpg"), os.path.join(session_path, "arabidopsis_tray.jpg"))
+    shutil.copyfile(DEFAULT_IMAGE_PATH, os.path.join(session_path, "arabidopsis_tray.jpg"))
 
   if (is_demo):
     st.subheader("Selected Image")
