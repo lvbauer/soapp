@@ -8,7 +8,6 @@ CONFIG_NAME = "marker_find_scale"
 MODULE_NAME = "Marker Scale Finder"
 
 #### Help Messages
-
 USE_FRAME_ADJ_HELP = """If Preprocess Module 'Marker Frame Adjust' is used prior to this module, the same marker dictionary and marker IDs will be used in this module.
                         Note: This overrides dictionary and marker IDs specified below."""
 

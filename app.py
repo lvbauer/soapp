@@ -35,7 +35,7 @@ if ("session_data" not in st.session_state):
 
 	st.session_state.session_config = {
 									"meta":{},
-									"preprocess":{"modules":{}, "active_list":[]},
+									"preprocess":{"modules":{}, "active_list":[], "scale_val": -1, "stand_unit": ""},
 									"masking":{},
 									"roi":{},
 									"analysis":{},

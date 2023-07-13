@@ -15,7 +15,6 @@ def app():
 
   user_image = st.session_state.user_image_file
   is_demo = st.session_state.is_demo
-  #file_path = st.session_state.file_path_temp
 
   # Behavior if user uploads an image
   if user_image != None:
@@ -30,9 +29,6 @@ def app():
   elif (is_demo == False):
     st.error("Please upload image.")
     st.stop()
-
-    # Update the image file location to the user uploaded image
-    #args.image = os.path.join(session_path, user_image.name)
 
   else:
     file_path = os.path.join("assets", "arabidopsis_tray.jpg")
@@ -57,23 +53,6 @@ def app():
   ## Prints img down below
   st.image(file_path, use_column_width=True)
 
-  ## Implement a conditional dropdown for setting a size standard on user image
-
-  # Default scale value as -1 for feeding into convert to tabular
-  if (("scale_val" in st.session_state.session_config["preprocess"]) and ("scale_val" in st.session_state.session_config["preprocess"])):
-    scale_val = st.session_state.session_config["preprocess"]["scale_val"]
-    stand_unit = st.session_state.session_config["preprocess"]["stand_unit"]
-
-  else:
-    if (st.session_state.user_config):
-
-      scale_val = st.session_state.user_config["preprocess"]["scale_val"]
-      stand_unit = st.session_state.user_config["preprocess"]["stand_unit"]
-
-    else:
-      scale_val = -1
-      stand_unit = ""
-  
   #######################
   # Image PreProcessing
   #######################
@@ -118,8 +97,6 @@ def app():
   st.image(st.session_state.session_data["work_img"])
  
   # Update vlaues
-  st.session_state.session_config["preprocess"]["scale_val"] = scale_val
-  st.session_state.session_config["preprocess"]["stand_unit"] = stand_unit
   st.session_state.is_demo = is_demo
 
 def updateConfig():

@@ -16,7 +16,7 @@ COPY helpers/ ./helpers/
 
 # Copy the sessionkeeping script into cron.hourly
 # Removes session directories older than 3 days from the session directory
-COPY sessionkeep /etc/cron.hourly/sessoinkeep
+COPY sessionkeep /etc/cron.hourly/sessionkeep
 
 
 # Run application 
