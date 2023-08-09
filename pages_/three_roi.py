@@ -218,6 +218,13 @@ def app():
 
 	# Display the contour image
 	st.subheader("ROI Positions")
+	show_masked_checkbox = st.checkbox("Show Masked Image")
+
+	if (show_masked_checkbox):
+		roi_masked_image = pcv.apply_mask(img=img, mask=st.session_state.session_data["bin_mask"], mask_color="white")
+		for roi_contour in rois:
+			drawContours(roi_masked_image, roi_contour, -1, (255, 0, 255), 10)
+
 	st_display_image(img_copy_rois, os.path.join(session_path, "contour_image.png"), resize_factor=st.session_state.universal_resize_factor)
 
 	# Set session_state
