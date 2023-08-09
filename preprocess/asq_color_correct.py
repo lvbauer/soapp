@@ -16,10 +16,7 @@ BOTTOM_LEFT = 47
 BOTTOM_RIGHT = 46
 
 
-
-
 # Help Text
-
 
 
 #### Standard Functions
@@ -66,6 +63,11 @@ def work(image, config):
 
     # Get marker points
     marker_pt_list = get_validate_square(image)
+
+    if (len(marker_pt_list) < 4):
+        st.error(f"Marker not found in image.")
+        return image
+
     marker_pt_list = get_aruco_points(marker_pt_list)
 
     dest_pts = [

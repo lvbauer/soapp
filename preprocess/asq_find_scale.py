@@ -35,9 +35,9 @@ SCALE_METHODS = [
 
 MARKER_SPILLOVER_HELP = "If selected, marker scale calculation method will be used on detected markers if all 4 tags on the astrobotany sticker are not detected."
 
-METHOD_SELECT_HELP = "The 'STICKER' method calculates scale from the entire Astrobotany sticker. "
-"The 'MARKER' method calculates scale based only on the sticker markers"
-", which is useful if the Astrobotany is partially covered in the image."
+METHOD_SELECT_HELP = """The 'STICKER' method calculates scale from the entire Astrobotany sticker. "
+The 'MARKER' method calculates scale based only on the sticker markers
+, which is useful if the Astrobotany is partially covered in the image."""
 
 #### Standard Functions
 
@@ -95,6 +95,10 @@ def work(image, config):
 
     # Slice image array to specified crop values
     marker_points_list = get_validate_square(image)
+
+    if (len(marker_points_list) < 4):
+        st.error(f"Marker not found in image.")
+        return image
 
     if (config["method"] == "MARKER") or ((len(marker_points_list) < 4) and (config["marker_spillover"] == True)):
         scale_val, unit = get_marker_scale(marker_points_list)

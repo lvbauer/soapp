@@ -92,10 +92,9 @@ def app():
 			clean_fill_value = 200
 
 		## Case 1: No selections, throw error and return none for good measure
-		if (not selections):
+		if (len(selections) == 0):
 			st.error("Please select colorspaces")
 			st.stop()
-			return None
 
 		## Case 2: One colorspace, run colorspace through single
 		elif (len(selections) == 1):
