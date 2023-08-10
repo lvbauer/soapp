@@ -82,10 +82,15 @@ def app():
 		lab = {"L", "A", "B"}
 
 		# Initial values
+		# TODO is this still needed
 		if (config_bool):
-			clean_fill_value = config_mask["clean_fill_val"]
-			thresh_val = config_mask["masking_vals"][0][0]
-			max_val = config_mask["masking_vals"][0][1]
+			try:
+				clean_fill_value = config_mask["clean_fill_val"]
+				thresh_val = config_mask["masking_vals"][0][0]
+				max_val = config_mask["masking_vals"][0][1]
+			except:
+				st.error("Please select colorspaces.")
+				st.stop()
 		else:
 			thresh_val = 100
 			max_val = 255
@@ -93,7 +98,7 @@ def app():
 
 		## Case 1: No selections, throw error and return none for good measure
 		if (len(selections) == 0):
-			st.error("Please select colorspaces")
+			st.error("Please select colorspaces.")
 			st.stop()
 
 		## Case 2: One colorspace, run colorspace through single
