@@ -35,7 +35,7 @@ SCALE_METHODS = [
 
 MARKER_SPILLOVER_HELP = "If selected, marker scale calculation method will be used on detected markers if all 4 tags on the astrobotany sticker are not detected."
 
-METHOD_SELECT_HELP = """The 'STICKER' method calculates scale from the entire Astrobotany sticker. "
+METHOD_SELECT_HELP = """The 'STICKER' method calculates scale from the entire Astrobotany sticker. 
 The 'MARKER' method calculates scale based only on the sticker markers
 , which is useful if the Astrobotany is partially covered in the image."""
 
