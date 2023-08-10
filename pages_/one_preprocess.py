@@ -59,7 +59,8 @@ def app():
 
   # Interface for choosing preprocessing steps
   options_list = [module.rstrip(".py") for module in os.listdir("preprocess")]
-  options_list.remove("__pycache__")
+  if ("__pycache__" in options_list):
+    options_list.remove("__pycache__")
 
   # Handle imports
   if ("module_store" not in st.session_state):

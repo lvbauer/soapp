@@ -45,7 +45,11 @@ def render(image):
     marker_img = np.copy(image)
 
     # Find square markers in image
-    marker_cords, marker_ids = get_validate_square_ids(image)
+    try:
+        marker_cords, marker_ids = get_validate_square_ids(image)
+    except TypeError:
+        st.error("Marker not found in image.")
+        return image
 
     # Check if marker was found
     if (len(marker_cords) < 4):

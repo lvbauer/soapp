@@ -94,7 +94,12 @@ def work(image, config):
     """
 
     # Slice image array to specified crop values
-    marker_points_list = get_validate_square(image)
+    try:
+        marker_points_list = get_validate_square(image)
+    except TypeError:
+        st.error("Marker not found in image.")
+        return image
+
 
     if (len(marker_points_list) < 4):
         st.error(f"Marker not found in image.")

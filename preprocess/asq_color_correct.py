@@ -62,7 +62,11 @@ def work(image, config):
     """
 
     # Get marker points
-    marker_pt_list = get_validate_square(image)
+    try:
+        marker_pt_list = get_validate_square(image)
+    except TypeError:
+        st.error("Marker not found in image.")
+        return image    
 
     if (len(marker_pt_list) < 4):
         st.error(f"Marker not found in image.")
