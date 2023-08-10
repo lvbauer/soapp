@@ -1,5 +1,4 @@
 altair==4.2.0
-numpy==1.21.0
 pandas==1.5.2
 Pillow==8.2.0
 plantcv==3.14.2
@@ -7,3 +6,4 @@ streamlit==1.19.0
 protobuf==3.20.3
 scikit-image==0.18.2
 opencv-contrib-python-headless==4.6.0.66
+numpy==1.21.0
