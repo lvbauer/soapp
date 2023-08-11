@@ -27,7 +27,6 @@ def app():
 
 	# Get the image variable from data
 	img = st.session_state.session_data["work_img"]
-	img = cvtColor(img, COLOR_BGR2RGB)
 	bin_mask = st.session_state.session_data["bin_mask"]
 	
 	# Put heigth, width into variables
@@ -224,7 +223,9 @@ def app():
 		roi_masked_image = pcv.apply_mask(img=img, mask=st.session_state.session_data["bin_mask"], mask_color="white")
 		for roi_contour in rois:
 			drawContours(roi_masked_image, roi_contour, -1, (255, 0, 255), 10)
+		st.image(roi_masked_image)
 
+	img_copy_rois = cvtColor(img_copy_rois, COLOR_BGR2RGB)
 	st_display_image(img_copy_rois, os.path.join(session_path, "contour_image.png"), resize_factor=st.session_state.universal_resize_factor)
 
 	# Set session_state
