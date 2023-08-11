@@ -28,8 +28,6 @@ def app():
 	# TODO Change this
 	universal_resize_factor = st.session_state.universal_resize_factor
 	
-	color_analysis_check = False
-
 	st.header("Analyzed Plants")
 
 	# Display results image
@@ -40,10 +38,6 @@ def app():
 				st.caption("NOTE: Image has been downscaled. To see full resolution image, set Resize Factor to 1.")
 
 			st.image(os.path.join(session_path, "analyzed_image.png"), use_column_width=True)
-
-	if ((color_analysis_check) and (os.path.isfile(os.path.join(session_path, "color_analysis_image.png")))):
-		st.subheader("Colorspaces Analysis")
-		st.image(os.path.join(session_path, "color_analysis_image.png"), use_column_width=True)
 
 	st.subheader("Data")
 
@@ -86,6 +80,14 @@ def app():
 		st.subheader("Results Table")
 		csv_results_df = read_csv(csv_results_path)
 		st.dataframe(csv_results_df)
+
+	# TODO figure this out, maybe concatenate the color graphs and label them before display
+	#if st.checkbox("Show Color Analysis"):
+	#	if (os.path.isfile(os.path.join(session_path, "color_analysis_image.png"))):
+	#		st.subheader("Colorspaces Analysis")
+	#		st.image(os.path.join(session_path, "color_analysis_image.png"), use_column_width=True)
+	#	else:
+	#		st.warning("No color analysis found.")
 
 		## Implement button for downloading all files from analysis
 
