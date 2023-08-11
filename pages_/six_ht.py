@@ -111,9 +111,7 @@ def app():
 				img_binary_map = binary_masks[0]
 
 				for i in range(1, len(binary_masks)):
-
 					bool_operator = st.session_state.session_config["masking"]["log_ops"][i-1]
-
 					img_binary_map = pcv_mask_logic_op(
 						img_binary_map,
 						binary_masks[i],
@@ -309,7 +307,6 @@ def binary_mask_channel(img, channel, method, thresh_val, max_val, obj_type):
 	Single expandable function for handling channel output
 	"""
 
-
 	# Channel references
 	hsv = {"H", "S", "V"}
 	lab = {"L", "A", "B"}
@@ -346,7 +343,6 @@ def binary_mask_channel(img, channel, method, thresh_val, max_val, obj_type):
 	else:
 		# Expand here with other methods
 		pass
-
 
 	return bin_map
 
