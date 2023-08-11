@@ -40,6 +40,7 @@ def render(image):
     st.session_state.session_config["preprocess"]["modules"][CONFIG_NAME] = working_config
 
     ## 3| Find and display markers and squares
+    st.write("Note: This module does not modify the image.")
 
     # Make image copy
     marker_img = np.copy(image)
@@ -56,6 +57,9 @@ def render(image):
         st.error("Marker not found in image.")
         return image
 
+    # Convert marker ids to array
+    marker_ids = np.asarray(marker_ids)
+
     # Draw marker on image
     cv2.aruco.drawDetectedMarkers(marker_img, marker_cords, marker_ids)
 
@@ -63,7 +67,7 @@ def render(image):
     marker_points = get_aruco_points(marker_cords)
 
     # Draw Marker Box
-    circle_size = stat.mean(image.shape[0], image.shape[1]) // 100
+    circle_size = stat.mean((image.shape[0], image.shape[1])) // 100
     for idx, p in enumerate(marker_points):
         cv2.line(marker_img, p, marker_points[(idx+1)%(len(marker_points))], (255,0,0), (circle_size//2))
 
@@ -111,7 +115,7 @@ def get_validate_square_ids(rgb_image):
     """
 
     # Prep list of corner markers of square
-    marker_id_list = [TOP_LEFT, TOP_RIGHT, BOTTOM_RIGHT, BOTTOM_LEFT]
+    marker_id_list_reference = [TOP_LEFT, TOP_RIGHT, BOTTOM_RIGHT, BOTTOM_LEFT]
 
     # Load dictionary and detect markers
     arucoDict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_4X4_50)
@@ -125,10 +129,12 @@ def get_validate_square_ids(rgb_image):
     marker_id_corner_list = list(zip(ids, corners))
     marker_id_corner_list = sorted(marker_id_corner_list, key=lambda x : x[0])
 
+
     for id, marker in marker_id_corner_list:
-        if id in marker_id_list:
+
+        if id in marker_id_list_reference:
             marker_cord_list.append(marker)
-            marker_id_list.append(id)
+            marker_id_list.append(id[0])
 
     return marker_cord_list, marker_id_list
 
