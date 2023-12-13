@@ -1,5 +1,7 @@
 import streamlit as st
 from plantcv import plantcv as pcv
+from PIL import Image
+
 from helpers import pcvconvert
 import numpy as np
 import shutil
@@ -26,6 +28,12 @@ def app():
 		
 		# Prep the multirun environment
 		os.mkdir(bulk_path)
+
+		# Catch missing user_image_list
+		if ("user_image_list" not in st.session_state):
+			st.error("No image list found. Check that you have uploaded your images.")
+			st.stop()
+
 
 		# Main loop through processed images
 		for image_obj in st.session_state.user_image_list:
@@ -203,7 +211,7 @@ def app():
 						#	 obj	 = composed object contours
 						#	 mask	= binary mask that contours were derived from
 						#	 label = a label for the group of measurements (default = "default")
-						img_copy = pcv.analyze_object(img=img_copy, 
+						img_copy = pcv.analyze_object(img=working_image, 
 													  obj=plant_obj, 
 													  mask=plant_mask, 
 													  label=f"plant{plant_id}")
@@ -216,7 +224,7 @@ def app():
 							#	 obj - seed
 							#	 hist_plot_type - 'all', or None for no histogram plot
 							#	 label - 'default'			
-							color_img = pcv.analyze_color(rgb_img=img_copy, 
+							color_img = pcv.analyze_color(rgb_img=working_image, 
 															mask=plant_mask, 
 															hist_plot_type=None, 
 															label=f"plant{plant_id}_color")
@@ -265,9 +273,12 @@ def app():
 						2, (255, 255, 255), 8
 						)
 			
-			pcv.print_image(
+			# Export jpeg file with quality "jpeg_quality" range 0-100
+			jpeg_quality = 90
+			cv2.imwrite(
+				os.path.join(img_dir_path, f"{img_name}_analyzed_image.jpg"),
 				img_copy,
-				os.path.join(img_dir_path, f"{img_name}_analyzed_image.png")
+				[cv2.IMWRITE_JPEG_QUALITY, jpeg_quality]
 				)
 
 			results_path = os.path.join(img_dir_path, f"{img_name}_results.json")
