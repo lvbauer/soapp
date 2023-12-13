@@ -289,14 +289,21 @@ def app():
 			st.stop()
 
 		st_display_image(fill_image,  os.path.join(session_path, "filled_bin_mask_image.png"), resize_factor=st.session_state.universal_resize_factor)
-
 		st.session_state.session_data["bin_mask"] = fill_image
 
+		show_masked_checkbox = st.checkbox("Show Masked Image")
+		if (show_masked_checkbox):
+			masked_image = pcv.apply_mask(img=img, mask=st.session_state.session_data["bin_mask"], mask_color="white")
+			st_display_image(masked_image, os.path.join(session_path, "masked_image.png"), resize_factor=st.session_state.universal_resize_factor)
 
 	else:
 		st.subheader("Final Mask")
 		st_display_image(st.session_state.session_data["bin_mask"], os.path.join(session_path, "filled_bin_mask_image.png"))
 
+		show_masked_checkbox = st.checkbox("Show Masked Image")
+		if (show_masked_checkbox):
+			roi_masked_image = pcv.apply_mask(img=img, mask=st.session_state.session_data["bin_mask"], mask_color="white")
+			st.image(roi_masked_image)
 
 def pcv_mask_logic_op(mask1, mask2, boolean):
 	if (boolean.upper() == "AND"):
