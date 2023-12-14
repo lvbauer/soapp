@@ -22,6 +22,11 @@ def app():
 
 	if st.button("Run Bulk Analysis"):
 
+		# Catch missing user_image_list
+		if ("user_image_list" not in st.session_state):
+			st.error("No image list found. Check that you have uploaded your images.")
+			st.stop()
+
 		# Remove old bulk run path to avoid conflict
 		if os.path.isdir(bulk_path):
 			shutil.rmtree(bulk_path)
@@ -34,13 +39,6 @@ def app():
 		if (os.path.isfile(config_json_path)):
 			shutil.copy(config_json_path, bulk_path)
 			
-
-
-		# Catch missing user_image_list
-		if ("user_image_list" not in st.session_state):
-			st.error("No image list found. Check that you have uploaded your images.")
-			st.stop()
-
 		# Progress info for HT run
 		num_images = len(st.session_state.user_image_list)
 		
