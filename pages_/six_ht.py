@@ -29,6 +29,13 @@ def app():
 		# Prep the multirun environment
 		os.mkdir(bulk_path)
 
+		# Copy analysis config to bulk analysis file
+		config_json_path = os.path.join(st.session_state.session_path, "analysis_config.json")
+		if (os.path.isfile(config_json_path)):
+			shutil.copy(config_json_path, bulk_path)
+			
+
+
 		# Catch missing user_image_list
 		if ("user_image_list" not in st.session_state):
 			st.error("No image list found. Check that you have uploaded your images.")
@@ -319,7 +326,6 @@ def app():
 			# Conclude loop
 
 		# Zip the bulk process folder and provide download link
-
 		if os.path.isdir(bulk_path) and (not os.path.isfile(zip_path)):
 			shutil.make_archive(zip_name, "zip", bulk_path)
 
