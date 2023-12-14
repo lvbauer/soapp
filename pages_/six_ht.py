@@ -34,12 +34,23 @@ def app():
 			st.error("No image list found. Check that you have uploaded your images.")
 			st.stop()
 
+		# Progress info for HT run
+		num_images = len(st.session_state.user_image_list)
+		
+		# Start analysis message
+		st.info(f"Started analysis on {num_images} Images")
+
+		# Generate progress bar that increments by ROI analyzed
+		st.write("Analysis Progress:")
+		analysis_prog_bar = st.progress(0)
+		prog_total = 0.0
+		prog_iter_step = 1 / num_images
 
 		# Main loop through processed images
-		for image_obj in st.session_state.user_image_list:
+		for idx, image_obj in enumerate(st.session_state.user_image_list):
 
 			# Analysis start message
-			st.info(f"Started analysis on: {image_obj.name}")
+			st.info(f"Started analysis on: {image_obj.name}. Image {idx+1} of {num_images}")
 
 			# Set up image directory
 			st.session_state.user_image_file = image_obj
@@ -297,7 +308,13 @@ def app():
 				)
 
 			# Analysis success message
-			st.success(f"Analysis Completed: f{image_obj.name}")
+			st.success(f"Analysis Completed: {image_obj.name}")
+
+			# Update the progress bar
+			prog_total += prog_iter_step
+			if (prog_total > 1):
+				prog_total = 1
+			analysis_prog_bar.progress(prog_total)
 
 			# Conclude loop
 
