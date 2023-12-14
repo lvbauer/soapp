@@ -15,6 +15,9 @@ TOP_RIGHT = 49
 BOTTOM_LEFT = 47
 BOTTOM_RIGHT = 46
 
+# Square Destination Size
+MARKER_HEIGHT = 208
+MARKER_WIDTH = 176
 
 # Help Text
 
@@ -82,7 +85,7 @@ def work(image, config):
     ]
 
     # Make array to warp into
-    marker_arr = np.zeros((240, 177, 3), dtype=np.uint8)
+    marker_arr = np.zeros((MARKER_HEIGHT, MARKER_WIDTH, 3), dtype=np.uint8)
 
     marker_pt_array = np.array(marker_pt_list, dtype=np.float32)
     dest_pt_array = np.array(dest_pts, dtype=np.float32)
@@ -114,19 +117,6 @@ def updateConfig():
     """
 
 #### Custom Functions
-
-def asq_hist_correct(img, astrosquare):
-    # Modified from the PlantCV implementation
-
-    hmax = 255
-    data_type = np.uint8
-
-    hist, bins = np.histogram(astrosquare, bins='auto')
-    max1 = np.amax(bins)
-    alpha = hmax / float(max1)
-    corrected = np.asarray(np.where(img <= max1, np.multiply(alpha, img), hmax), data_type)
-
-    return corrected
 
 def get_validate_square(rgb_image):
     """Finds CV tag Astrosquare sticker in an image and returns list of corner points for the sticker.
@@ -174,3 +164,74 @@ def get_aruco_points(marker_corners):
         point_list.append(point_centroid_tuple)
 
     return point_list
+
+def channel_hist_correct(corr_channel, standard_channel):
+    hmax = 255
+    data_type = np.uint8
+
+    img_copy = np.copy(corr_channel)
+    
+    hist, bins = np.histogram(standard_channel, bins='auto')
+    max1 = np.amax(bins)
+    alpha = hmax / float(max1)
+    corrected = np.asarray(np.where(img_copy <= max1, np.multiply(alpha, img_copy), hmax), data_type)
+
+    return corrected
+
+
+def asq_hist_correct(img, astrosquare):
+    # Modified from the PlantCV implementation
+
+    hmax = 255
+    data_type = np.uint8
+
+    c1, r1 = img[:,:,0], astrosquare[:,:,0]
+    c2, r2 = img[:,:,1], astrosquare[:,:,1]
+    c3, r3 = img[:,:,2], astrosquare[:,:,2]
+
+    channel1 = channel_hist_correct(c1, r1)
+    channel2 = channel_hist_correct(c2, r2)
+    channel3 = channel_hist_correct(c3, r3)
+    
+    corrected = np.dstack((channel1, channel2, channel3))
+
+    return corrected
+
+def asq_color_correct(img):
+    """Main function for histogram color correction.
+    """
+    
+    # Get marker points
+    try:
+        marker_pt_list = get_validate_square(img)
+    except TypeError:
+        raise Exception("Marker not found in image.")
+
+    if (len(marker_pt_list) < 4):
+        raise Exception("Marker not found in image.")
+
+    marker_pt_list = get_aruco_points(marker_pt_list)
+
+    dest_pts = [
+         [18, 18],
+         [18, 157],
+         [190, 157],
+         [190, 18]
+    ]
+
+    # (X,Y) to (Y,X)
+    dest_pts_correct = [[pt[1], pt[0]] for pt in dest_pts]
+
+    # Make array to warp into
+    marker_arr = np.zeros((MARKER_HEIGHT, MARKER_WIDTH, 3), dtype=np.uint8)
+
+    marker_pt_array = np.array(marker_pt_list, dtype=np.float32)
+    dest_pt_array = np.array(dest_pts_correct, dtype=np.float32)
+
+    H = cv2.findHomography(marker_pt_array, dest_pt_array, cv2.LMEDS)
+    marker_stretch_img = cv2.warpPerspective(img, H[0], (marker_arr.shape[1], marker_arr.shape[0]))
+
+    final_image = asq_hist_correct(img, marker_stretch_img)
+    
+    # Return RGB Image
+    return final_image
