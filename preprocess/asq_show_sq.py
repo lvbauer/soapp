@@ -69,7 +69,7 @@ def render(image):
     # Draw Marker Box
     circle_size = stat.mean((image.shape[0], image.shape[1])) // 100
     for idx, p in enumerate(marker_points):
-        cv2.line(marker_img, p, marker_points[(idx+1)%(len(marker_points))], (255,0,0), (circle_size//2))
+        cv2.line(marker_img, p, marker_points[(idx+1)%(len(marker_points))], (255,0,0), int(circle_size//2))
 
     # Display image annotated with markers
     st.subheader("Detected Marker")
