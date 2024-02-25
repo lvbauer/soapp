@@ -3,6 +3,7 @@ import os
 from helpers.pcvdl import download_all
 from helpers.displayimg import *
 from helpers import pcvconvert
+from helpers.pcvcolorformat import pcv_convert_color
 from pandas import read_csv
 
 def app():
@@ -46,40 +47,72 @@ def app():
 	if os.path.isfile(args.result):
 
 ## TODO change the values in format_pcv_json()
-		
+		if (is_demo):
+			user_file_name = "demo_image"
+		else:
+			user_file_name = st.session_state.user_image_name
+
 		# Reformat CSVs if analysis was run this reload
 		if (analysis_run):
-			if (not is_demo):
-				pcvconvert.format_pcv_json(args.result, 
-										   csv_results_path, 
-										   scale=st.session_state.session_config["preprocess"]["scale_val"], 
-										   names=st.session_state.session_config["roi"]["name_list"],
-										   file_name=st.session_state.user_image_name, 
-										   plant_notes=st.session_state.session_config["roi"]["plant_notes_list"])
-			else:
-				pcvconvert.format_pcv_json(args.result, 
-										   csv_results_path, 
-										   scale=st.session_state.session_config["preprocess"]["scale_val"], 
-										   names=st.session_state.session_config["roi"]["name_list"],
-										   file_name=None, 
-										   plant_notes=st.session_state.session_config["roi"]["plant_notes_list"])
+			pcvconvert.format_pcv_json(args.result, 
+									   csv_results_path, 
+									   scale=st.session_state.session_config["preprocess"]["scale_val"], 
+									   names=st.session_state.session_config["roi"]["name_list"],
+									   file_name=user_file_name, 
+									   plant_notes=st.session_state.session_config["roi"]["plant_notes_list"])
+
+			# Format color values and scale vs. not scale
+			if (st.session_state.session_config["analysis"]["color"] == True):
+				
+				# Generate path for color results
+				color_csv_results_path = os.path.join(session_path, "color_results.csv")
+
+				# Use standard case
+				if ("color_references" in st.session_state.session_config["preprocess"]) and (st.session_state.session_config["preprocess"]["color_references"] is not None):
+					
+					color_ref_dict = st.session_state.session_config["preprocess"]["color_references"]
+					r_standard = color_ref_dict["r_standard"]
+					g_standard = color_ref_dict["g_standard"]
+					b_standard = color_ref_dict["b_standard"]
+
+					color_ref_tuple = (r_standard, g_standard, b_standard)
+
+					pcv_convert_color(args.result, color_csv_results_path,
+					   file_name=user_file_name, color_standard=color_ref_tuple)
+
+				# No standard case
+				else:
+					pcv_convert_color(args.result, color_csv_results_path,
+					   file_name=user_file_name)
 
 	# Implement download button for formatted CSV
 	if os.path.isfile(csv_results_path):
 		with open(csv_results_path, "r") as f:
 			st.download_button("Download Formatted CSV", f, file_name="results.csv")
+	
+	if os.path.isfile(color_csv_results_path):
+		## Implement raw JSON download button
+		with open(color_csv_results_path, "r") as f:
+			st.download_button("Download Raw JSON", f, file_name="color_results.csv")
 
 	if os.path.isfile(os.path.join(session_path, "results.json")):
 		## Implement raw JSON download button
 		with open(os.path.join(session_path, "results.json"), "r") as f:
 			st.download_button("Download Raw JSON", f, file_name="results.json")
+	
 
 
 	## Checkbox for showing Tabular results in a DF here
 	if st.checkbox("Show Results"):
-		st.subheader("Results Table")
+		st.subheader("Morphology Results Table")
 		csv_results_df = read_csv(csv_results_path)
 		st.dataframe(csv_results_df)
+
+		if os.path.isfile(color_csv_results_path):
+			st.subheader("Color Results Table")
+			color_csv_results_df = read_csv(color_csv_results_path)
+			st.dataframe(color_csv_results_df)
+
 
 	# TODO figure this out, maybe concatenate the color graphs and label them before display
 	#if st.checkbox("Show Color Analysis"):
@@ -107,6 +140,7 @@ def app():
 			if st.checkbox("Results Files (CSV & JSON)", value=True):
 				dl_files_list.append("results.json")
 				dl_files_list.append("results.csv")
+				dl_files_list.append("color_results.csv")
 
 			if st.checkbox("Original Image", value=True):
 				dl_files_list.append(image_filename)
