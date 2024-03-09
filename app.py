@@ -75,7 +75,6 @@ with st.sidebar:
 	st.session_state.user_config = st.file_uploader("Upload Config File")
 
 	if (st.session_state.user_config != None) and ("upload_bool" not in st.session_state):
-		config_data = st.session_state.user_config
 		config_data = st.session_state.user_config.getvalue().decode("utf-8")
 		st.session_state.session_config = json.loads(config_data)
 		st.session_state.upload_bool = True
