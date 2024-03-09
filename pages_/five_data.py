@@ -42,11 +42,14 @@ def app():
 
 	st.subheader("Data")
 
-	# Generate tabular formatted data
 	csv_results_path = os.path.join(session_path, "results.csv")
+	
+	# Generate path for color results
+	color_csv_results_path = os.path.join(session_path, "color_results.csv")
+	
+	# Generate tabular formatted data
 	if os.path.isfile(args.result):
-
-## TODO change the values in format_pcv_json()
+		## TODO change the values in format_pcv_json()
 		if (is_demo):
 			user_file_name = "demo_image"
 		else:
@@ -64,21 +67,26 @@ def app():
 			# Format color values and scale vs. not scale
 			if (st.session_state.session_config["analysis"]["color"] == True):
 				
-				# Generate path for color results
-				color_csv_results_path = os.path.join(session_path, "color_results.csv")
-
 				# Use standard case
-				if ("color_references" in st.session_state.session_config["preprocess"]) and (st.session_state.session_config["preprocess"]["color_references"] is not None):
+				if ("color_info" in st.session_state.session_config["preprocess"]) and (st.session_state.session_config["preprocess"]["color_info"] is not None):
 					
-					color_ref_dict = st.session_state.session_config["preprocess"]["color_references"]
-					r_standard = color_ref_dict["r_standard"]
-					g_standard = color_ref_dict["g_standard"]
-					b_standard = color_ref_dict["b_standard"]
+					color_ref_dict = st.session_state.session_config["preprocess"]["color_info"]
+					
+					r_standard = color_ref_dict["standard"]["r_standard"]
+					g_standard = color_ref_dict["standard"]["g_standard"]
+					b_standard = color_ref_dict["standard"]["b_standard"]
+					color_stand_tuple = (r_standard, g_standard, b_standard)
 
-					color_ref_tuple = (r_standard, g_standard, b_standard)
+					r_ref = color_ref_dict["refs"]["r_ref"]
+					g_ref = color_ref_dict["refs"]["g_ref"]
+					b_ref = color_ref_dict["refs"]["b_ref"]
+					color_ref_tuple = (r_ref, g_ref, b_ref)
 
+					print(color_ref_tuple)
+
+					# TODO update for color with color_refs
 					pcv_convert_color(args.result, color_csv_results_path,
-					   file_name=user_file_name, color_standard=color_ref_tuple)
+					   file_name=user_file_name, color_standard=color_stand_tuple, color_refs=color_ref_tuple)
 
 				# No standard case
 				else:
@@ -93,14 +101,13 @@ def app():
 	if os.path.isfile(color_csv_results_path):
 		## Implement raw JSON download button
 		with open(color_csv_results_path, "r") as f:
-			st.download_button("Download Raw JSON", f, file_name="color_results.csv")
+			st.download_button("Download Color Results CSV", f, file_name="color_results.csv")
 
 	if os.path.isfile(os.path.join(session_path, "results.json")):
 		## Implement raw JSON download button
 		with open(os.path.join(session_path, "results.json"), "r") as f:
 			st.download_button("Download Raw JSON", f, file_name="results.json")
 	
-
 
 	## Checkbox for showing Tabular results in a DF here
 	if st.checkbox("Show Results"):

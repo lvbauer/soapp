@@ -21,6 +21,12 @@ BOTTOM_RIGHT = 46
 MARKER_HEIGHT = 208
 MARKER_WIDTH = 176
 
+# Astrosquare color references
+
+R_REF = 204
+G_REF = 173
+B_REF = 140
+
 # Help Text
 
 
@@ -41,10 +47,6 @@ def render(image):
 
     working_config = st.session_state.session_config["preprocess"]["modules"][CONFIG_NAME]
 
-    ## 2| Calculate the scaling from astrobotany square
-
-
-    
     ## 3| Update config
     st.session_state.session_config["preprocess"]["modules"][CONFIG_NAME] = working_config
 
@@ -53,7 +55,7 @@ def render(image):
 
     # Display information about the scale found
     st.write("Scale Information")
-    st.json(st.session_state.session_config["preprocess"]["color_references"])
+    st.json(st.session_state.session_config["preprocess"]["color_info"]["standard"])
 
 
     # Return RGB Image
@@ -77,7 +79,6 @@ def work(image, config):
         return image
 
 
-
     # Save to internal config
     ref_dict = asq_color_standards(image)
 
@@ -88,8 +89,14 @@ def work(image, config):
     # Save to session_state if scale is found
     rgb_dict = {"r_standard": r_stand_val, "g_standard": g_stand_val, "b_standard": b_stand_val}
 
-    st.session_state.session_config["preprocess"]["color_references"] = rgb_dict
+    if ("color_info" not in st.session_state.session_config["preprocess"]):
+        st.session_state.session_config["preprocess"]["color_info"] = {}
     
+    st.session_state.session_config["preprocess"]["color_info"]["standard"] = rgb_dict
+
+    # Save base line values
+    st.session_state.session_config["preprocess"]["color_info"]["refs"] = {"r_ref": R_REF, "g_ref": G_REF, "b_ref": B_REF}
+
     # Return RGB Image
     final_image = image
     return final_image
