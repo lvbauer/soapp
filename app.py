@@ -15,6 +15,10 @@ def make_sessions_dir():
 def on_update():
 	st.session_state.universal_resize_factor = st.session_state.universal_resize_factor_input
 
+# Allows changing of uploaded configs
+def set_upload_bool():
+	st.session_state.upload_bool = False
+
 # Sets up 'session' directory if none exists
 ## Maybe remove if included in Docker construction
 make_sessions_dir()
@@ -72,12 +76,18 @@ with st.sidebar:
 	st.caption("Increase resize factor to increase performance at the expense of display image resolution. Does NOT impact final measurements.")
 
 	# Config file upload
-	st.session_state.user_config = st.file_uploader("Upload Config File")
+	st.session_state.user_config = st.file_uploader("Upload Config File", on_change=set_upload_bool)
 
 	if (st.session_state.user_config != None) and ("upload_bool" not in st.session_state):
 		config_data = st.session_state.user_config.getvalue().decode("utf-8")
 		st.session_state.session_config = json.loads(config_data)
 		st.session_state.upload_bool = True
+	
+	if ("upload_bool" in st.session_state):
+		if (st.session_state["upload_bool"] == False) and (st.session_state.user_config != None):
+			config_data = st.session_state.user_config.getvalue().decode("utf-8")
+			st.session_state.session_config = json.loads(config_data)
+			st.session_state.upload_bool = True
 
 
 	# Write config file
