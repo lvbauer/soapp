@@ -82,9 +82,6 @@ def app():
 					b_ref = color_ref_dict["refs"]["b_ref"]
 					color_ref_tuple = (r_ref, g_ref, b_ref)
 
-					print(color_ref_tuple)
-
-					# TODO update for color with color_refs
 					pcv_convert_color(args.result, color_csv_results_path,
 					   file_name=user_file_name, color_standard=color_stand_tuple, color_refs=color_ref_tuple)
 

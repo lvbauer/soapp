@@ -115,9 +115,6 @@ def pcv_convert_color(json_in_path, csv_out_path, file_name, color_standard=None
         color_ref_dict = calc_channel_references(*color_standard)
         color_adj_dict = calc_channel_correction(color_standard, color_refs)
 
-        print(color_ref_dict)
-        print(color_adj_dict)
-
     else:
         color_ref_dict = None
         color_adj_dict = None
