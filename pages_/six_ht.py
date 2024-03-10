@@ -3,6 +3,8 @@ from plantcv import plantcv as pcv
 from PIL import Image
 
 from helpers import pcvconvert
+from helpers.pcvcolorformat import pcv_convert_color
+
 import numpy as np
 import shutil
 import cv2
@@ -303,6 +305,8 @@ def app():
 
 			# 5: Zip up the final result and make available for download
 			csv_results_path = os.path.join(img_dir_path, f"{img_name}_results.csv")
+			color_csv_results_path = os.path.join(img_dir_path, f"{img_name}_color_results.csv")
+
 			pcvconvert.format_pcv_json(
 				results_path, 
 				csv_results_path, 
@@ -311,6 +315,33 @@ def app():
 				file_name=image_obj.name, 
 				plant_notes=st.session_state.session_config["roi"]["plant_notes_list"]
 				)
+
+			# Format color values and scale vs. not scale
+			if (st.session_state.session_config["analysis"]["color"] == True):
+				
+				# Use standard case
+				if ("color_info" in st.session_state.session_config["preprocess"]) and (st.session_state.session_config["preprocess"]["color_info"] is not None):
+					
+					color_ref_dict = st.session_state.session_config["preprocess"]["color_info"]
+					
+					r_standard = color_ref_dict["standard"]["r_standard"]
+					g_standard = color_ref_dict["standard"]["g_standard"]
+					b_standard = color_ref_dict["standard"]["b_standard"]
+					color_stand_tuple = (r_standard, g_standard, b_standard)
+
+					r_ref = color_ref_dict["refs"]["r_ref"]
+					g_ref = color_ref_dict["refs"]["g_ref"]
+					b_ref = color_ref_dict["refs"]["b_ref"]
+					color_ref_tuple = (r_ref, g_ref, b_ref)
+
+					pcv_convert_color(results_path, color_csv_results_path,
+					   file_name=img_name, color_standard=color_stand_tuple, color_refs=color_ref_tuple)
+
+				# No standard case
+				else:
+					pcv_convert_color(results_path, color_csv_results_path,
+					   file_name=img_name)
+
 
 			# Analysis success message
 			st.success(f"Analysis Completed: {image_obj.name}")
