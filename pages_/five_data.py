@@ -5,6 +5,7 @@ from helpers.displayimg import *
 from helpers import pcvconvert
 from helpers.pcvcolorformat import pcv_convert_color
 from pandas import read_csv
+import shutil
 
 def app():
 
@@ -25,6 +26,9 @@ def app():
 
 	is_demo = st.session_state.is_demo
 	
+	# Establish zip paths
+	zip_name = "session_" + st.session_state.session_id + "_sample.zip"
+	zip_path = os.path.join(".", "session", zip_name)
 	
 	# TODO Change this
 	universal_resize_factor = st.session_state.universal_resize_factor
@@ -128,38 +132,57 @@ def app():
 
 		## Implement button for downloading all files from analysis
 
-	if st.checkbox("Bulk Download"):
-		with st.expander("Bulk Data Download"): 
-			if (is_demo):
-				image_filename = "arabidopsis_tray.jpg"
-			else:
-				image_filename = st.session_state.user_image_name
-				
-			dl_files_list = []
+	st.subheader("Download All Data")
 
-			# TODO change this once config re-added
-			if st.checkbox("Config File", value=True):
-				dl_files_list.append("analysis_config.json")
+	# Remove to avoid adding to zip file
+	if (analysis_run) and (os.path.isfile(zip_path)):
+		os.remove(zip_path)
 
-			if st.checkbox("Results Files (CSV & JSON)", value=True):
-				dl_files_list.append("results.json")
-				dl_files_list.append("results.csv")
-				dl_files_list.append("color_results.csv")
+	# New Zip Generation and download functionality
+	if (not os.path.isfile(zip_path)):
+		if st.button("Generate Zip File"):
+			if (os.path.isdir(session_path)) and (not os.path.isfile(zip_path)):
+				shutil.make_archive(zip_path.rstrip(".zip"), "zip", session_path)
 
-			if st.checkbox("Original Image", value=True):
-				dl_files_list.append(image_filename)
+	
+	if os.path.isfile(zip_path):
+		with open(zip_path, "rb") as f:
+			st.download_button("Download All Results (ZIP File)", f, file_name=zip_name)
+	
 
-			if st.checkbox("Binary Mask Image", value=True):
-				dl_files_list.append("filled_bin_mask_image.png")
-
-			if st.checkbox("Contour Image", value=True):
-				dl_files_list.append("contour_image.png")
-
-			if st.checkbox("Analysis Image", value=True):
-				dl_files_list.append("analyzed_image.png")
-
-			if st.checkbox("Color Analysis Histograms", value=True):
-				hist_file_start = "color_analysis_plant"
-				[dl_files_list.append(hist_file) for hist_file in os.listdir(session_path) if (hist_file_start in hist_file)]
-
-			download_all(st.session_state.session_id, dl_files_list)
+	# TODO remove legacy download
+	#if st.checkbox("Bulk Download"):
+	#	with st.expander("Bulk Data Download"): 
+	#		if (is_demo):
+	#			image_filename = "arabidopsis_tray.jpg"
+	#		else:
+	#			image_filename = st.session_state.user_image_name
+	#			
+	#		dl_files_list = []
+	#
+	#		# TODO change this once config re-added
+	#		if st.checkbox("Config File", value=True):
+	#			dl_files_list.append("analysis_config.json")
+	#
+	#		if st.checkbox("Results Files (CSV & JSON)", value=True):
+	#			dl_files_list.append("results.json")
+	#			dl_files_list.append("results.csv")
+	#			dl_files_list.append("color_results.csv")
+	#
+	#		if st.checkbox("Original Image", value=True):
+	#			dl_files_list.append(image_filename)
+	#
+	#		if st.checkbox("Binary Mask Image", value=True):
+	#			dl_files_list.append("filled_bin_mask_image.png")
+	#
+	#		if st.checkbox("Contour Image", value=True):
+	#			dl_files_list.append("contour_image.png")
+	#
+	#		if st.checkbox("Analysis Image", value=True):
+	#			dl_files_list.append("analyzed_image.png")
+	#
+	#		if st.checkbox("Color Analysis Histograms", value=True):
+	#			hist_file_start = "color_analysis_plant"
+	#			[dl_files_list.append(hist_file) for hist_file in os.listdir(session_path) if (hist_file_start in hist_file)]
+	#
+	#		download_all(st.session_state.session_id, dl_files_list)
