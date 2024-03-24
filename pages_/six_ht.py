@@ -4,6 +4,8 @@ from PIL import Image
 
 from helpers import pcvconvert
 from helpers.pcvcolorformat import pcv_convert_color
+from helpers.pcvmorphoformat import pcv_convert_morpho
+
 
 import numpy as np
 import shutil
@@ -307,14 +309,33 @@ def app():
 			csv_results_path = os.path.join(img_dir_path, f"{img_name}_results.csv")
 			color_csv_results_path = os.path.join(img_dir_path, f"{img_name}_color_results.csv")
 
-			pcvconvert.format_pcv_json(
-				results_path, 
-				csv_results_path, 
-				scale=st.session_state.session_config["preprocess"]["scale_val"], 
-				names=st.session_state.session_config["roi"]["name_list"],
-				file_name=image_obj.name, 
-				plant_notes=st.session_state.session_config["roi"]["plant_notes_list"]
-				)
+			#pcvconvert.format_pcv_json(
+			#	results_path, 
+			#	csv_results_path, 
+			#	scale=st.session_state.session_config["preprocess"]["scale_val"], 
+			#	names=st.session_state.session_config["roi"]["name_list"],
+			#	file_name=image_obj.name, 
+			#	plant_notes=st.session_state.session_config["roi"]["plant_notes_list"]
+			#	)
+
+			# New file converter
+			if (st.session_state.session_config["preprocess"]["stand_unit"] != ""):
+				scale_unit = st.session_state.session_config["preprocess"]["stand_unit"]
+			else:
+				scale_unit = None
+			
+			if (st.session_state.session_config["preprocess"]["scale_val"] != -1):
+				scale_val = st.session_state.session_config["preprocess"]["scale_val"]
+			else:
+				scale_val = None
+
+			plant_names_list = st.session_state.session_config["roi"]["name_list"]
+			plant_notes_list = st.session_state.session_config["roi"]["plant_notes_list"]
+
+			pcv_convert_morpho(results_path, csv_results_path, img_name,
+					  scale_val=scale_val, scale_unit=scale_unit,
+					  names_list=plant_names_list, notes_list=plant_notes_list
+					  )
 
 			# Format color values and scale vs. not scale
 			if (st.session_state.session_config["analysis"]["color"] == True):
