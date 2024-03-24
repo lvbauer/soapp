@@ -46,8 +46,8 @@ def load_val(measure_dict):
 
     if ("'int'" in dtype_str): return int(measure_val)
     elif ("'float'" in dtype_str): return float(measure_val)
-    elif ("'bool'" in dtype_str): return bool(dtype_str)
-    elif ("'tuple'" in dtype_str): return tuple(dtype_str)  
+    elif ("'bool'" in dtype_str): return bool(measure_val)
+    elif ("'tuple'" in dtype_str): return tuple(measure_val)  
 
 def scale_linear(val, lin_scale): return val / lin_scale
 def scale_area(val, lin_scale): return val / (lin_scale ** 2)
@@ -64,7 +64,10 @@ def pcv_convert_morpho(json_in_path, csv_out_path, file_name,
     morpho_obs_dict = {}
     for obs_name, obs_dict in original_json["observations"].items():
         obs_number = is_morpho(obs_name)
-        if (obs_number):
+        if (obs_number is False):
+            continue
+
+        if (obs_number >= 0):
             morpho_obs_dict[obs_name] = {"observation_name": obs_name}
 
             # Handle plant names and notes
@@ -77,28 +80,29 @@ def pcv_convert_morpho(json_in_path, csv_out_path, file_name,
             # Load measures
             for measure_name, measure_dict in obs_dict.items():
                 morpho_obs_dict[obs_name][measure_name] = load_val(measure_dict)
-
+            
             # Handle scaling
             if (scale_unit is not None):
-                morpho_obs_dict[obs_name][measure_name] = scale_unit
+                morpho_obs_dict[obs_name]["scale_unit"] = scale_unit
 
-            for measure_name, measure_dict in obs_dict.items():
-                
-                # Scale linear
-                if (measure_name in LINEAR_SCALE_MEASURES):
-                    measure_val_unscaled = morpho_obs_dict[obs_name][measure_name]
-                    measure_val_scaled = scale_linear(measure_val_unscaled, scale_val)
-                    scaled_measure_name = measure_name + "_scaled"
-                    morpho_obs_dict[obs_name][scaled_measure_name] = measure_val_scaled
+            if (scale_val is not None):
+                for measure_name, measure_dict in obs_dict.items():
+                    
+                    # Scale linear
+                    if (measure_name in LINEAR_SCALE_MEASURES):
+                        measure_val_unscaled = morpho_obs_dict[obs_name][measure_name]
+                        measure_val_scaled = scale_linear(measure_val_unscaled, scale_val)
+                        scaled_measure_name = measure_name + "_scaled"
+                        morpho_obs_dict[obs_name][scaled_measure_name] = measure_val_scaled
 
-                # Scale area
-                elif (measure_name in AREA_SCALE_MEASURES):
-                    measure_val_unscaled = morpho_obs_dict[obs_name][measure_name]
-                    measure_val_scaled = scale_area(measure_val_unscaled, scale_val)
-                    scaled_measure_name = measure_name + "_scaled"
-                    morpho_obs_dict[obs_name][scaled_measure_name] = measure_val_scaled
+                    # Scale area
+                    elif (measure_name in AREA_SCALE_MEASURES):
+                        measure_val_unscaled = morpho_obs_dict[obs_name][measure_name]
+                        measure_val_scaled = scale_area(measure_val_unscaled, scale_val)
+                        scaled_measure_name = measure_name + "_scaled"
+                        morpho_obs_dict[obs_name][scaled_measure_name] = measure_val_scaled
 
             # Add file name
-            morpho_obs_dict[obs_number]["image_name"] = file_name
-
+            morpho_obs_dict[obs_name]["image_name"] = file_name
+    
     write_dict_to_csv(morpho_obs_dict, csv_out_path)
