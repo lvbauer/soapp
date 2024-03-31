@@ -179,7 +179,7 @@ def asq_adjust_image(rgb_img, rot=0, position="TOP_LEFT"):
     # Get marker centroids and make marker dict
     marker_pt_list = get_validate_square(rgb_img)
     marker_centroid_list = get_aruco_points(marker_pt_list)
-    marker_dict = {id : marker_centroid_list[idx] for idx, id in enumerate(id_order)}
+    marker_dict = {id : marker_centroid_list[idx] for idx, id in enumerate(id_list)}
 
     dest_pt_dict = make_point_dictionary(rgb_img, marker_dict, long_sides, short_sides)
 
@@ -195,6 +195,9 @@ def asq_adjust_image(rgb_img, rot=0, position="TOP_LEFT"):
         dst_pts = rotate_list(dest_pt_dict[position]["portrait"], 2)
     elif (rot == 3):
         dst_pts = rotate_list(dest_pt_dict[position]["landscape"], 3)
+
+    # reverse to get correct point order
+    dst_pts.reverse()
 
     # correct image
     corr_img = keystone_correct(rgb_img, src_pts, dst_pts)
