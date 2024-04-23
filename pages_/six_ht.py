@@ -15,7 +15,6 @@ import importlib
 
 def app():
 
-
 	session_path = st.session_state.session_path
 	session_id = st.session_state.session_id
 
@@ -75,7 +74,6 @@ def app():
 			original_image, path, filename = pcv.readimage(filename=image_work_path)
 
 			# 1: Preprocess
-
 			working_image = original_image
 			
 			# Initialize module_store if not in session_state
@@ -99,7 +97,6 @@ def app():
 
 
 			# 2: Masking
-
 			binary_masks = []
 
 			for idx, channel in enumerate(st.session_state.session_config["masking"]["colorspaces"]):
@@ -135,7 +132,6 @@ def app():
 				img_binary_map = binary_masks[0]
 
 			else:
-
 				img_binary_map = binary_masks[0]
 
 				for i in range(1, len(binary_masks)):
@@ -156,7 +152,6 @@ def app():
 
 			# 3: ROIs
 			roi_conf = st.session_state.session_config["roi"]
-
 
 			rois, roi_hierarchy = pcv.roi.multi(
 				img=working_image,
@@ -309,15 +304,6 @@ def app():
 			csv_results_path = os.path.join(img_dir_path, f"{img_name}_results.csv")
 			color_csv_results_path = os.path.join(img_dir_path, f"{img_name}_color_results.csv")
 
-			#pcvconvert.format_pcv_json(
-			#	results_path, 
-			#	csv_results_path, 
-			#	scale=st.session_state.session_config["preprocess"]["scale_val"], 
-			#	names=st.session_state.session_config["roi"]["name_list"],
-			#	file_name=image_obj.name, 
-			#	plant_notes=st.session_state.session_config["roi"]["plant_notes_list"]
-			#	)
-
 			# New file converter
 			if (st.session_state.session_config["preprocess"]["stand_unit"] != ""):
 				scale_unit = st.session_state.session_config["preprocess"]["stand_unit"]
@@ -363,7 +349,6 @@ def app():
 					pcv_convert_color(results_path, color_csv_results_path,
 					   file_name=img_name)
 
-
 			# Analysis success message
 			st.success(f"Analysis Completed: {image_obj.name}")
 
@@ -382,9 +367,6 @@ def app():
 	if os.path.isfile(zip_path):
 		with open(zip_path, "rb") as f:
 			st.download_button("Download Bulk Results", f, file_name=f"{session_id}_bulk.zip")
-
-
-
 
 def binary_mask_channel(img, channel, method, thresh_val, max_val, obj_type):
 	"""
