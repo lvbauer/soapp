@@ -43,16 +43,15 @@ def app():
 
 			st.image(os.path.join(session_path, "analyzed_image.png"), use_column_width=True)
 
+	# Present measured data
 	st.subheader("Data")
 
+	# Generate path for morpho and color results
 	csv_results_path = os.path.join(session_path, "results.csv")
-	
-	# Generate path for color results
 	color_csv_results_path = os.path.join(session_path, "color_results.csv")
 	
 	# Generate tabular formatted data
 	if os.path.isfile(args.result):
-		## TODO change the values in format_pcv_json()
 		if (is_demo):
 			user_file_name = "demo_image"
 		else:
@@ -60,14 +59,6 @@ def app():
 
 		# Reformat CSVs if analysis was run this reload
 		if (analysis_run):
-			
-			# Old file converter
-			#pcvconvert.format_pcv_json(args.result, 
-			#						   csv_results_path, 
-			#						   scale=st.session_state.session_config["preprocess"]["scale_val"], 
-			#						   names=st.session_state.session_config["roi"]["name_list"],
-			#						   file_name=user_file_name, 
-			#						   plant_notes=st.session_state.session_config["roi"]["plant_notes_list"])
 			
 			# New file converter
 			if (st.session_state.session_config["preprocess"]["stand_unit"] != ""):
@@ -119,18 +110,17 @@ def app():
 		with open(csv_results_path, "r") as f:
 			st.download_button("Download Formatted CSV", f, file_name="results.csv")
 	
+	# Implement raw JSON download button
 	if os.path.isfile(color_csv_results_path):
-		## Implement raw JSON download button
 		with open(color_csv_results_path, "r") as f:
 			st.download_button("Download Color Results CSV", f, file_name="color_results.csv")
 
+	# Implement raw JSON download button
 	if os.path.isfile(os.path.join(session_path, "results.json")):
-		## Implement raw JSON download button
 		with open(os.path.join(session_path, "results.json"), "r") as f:
 			st.download_button("Download Raw JSON", f, file_name="results.json")
 	
-
-	## Checkbox for showing Tabular results in a DF here
+	# Show tabular results in a DF element
 	if st.checkbox("Show Results"):
 		st.subheader("Morphology Results Table")
 		csv_results_df = read_csv(csv_results_path)
@@ -141,17 +131,7 @@ def app():
 			color_csv_results_df = read_csv(color_csv_results_path)
 			st.dataframe(color_csv_results_df)
 
-
-	# TODO figure this out, maybe concatenate the color graphs and label them before display
-	#if st.checkbox("Show Color Analysis"):
-	#	if (os.path.isfile(os.path.join(session_path, "color_analysis_image.png"))):
-	#		st.subheader("Colorspaces Analysis")
-	#		st.image(os.path.join(session_path, "color_analysis_image.png"), use_column_width=True)
-	#	else:
-	#		st.warning("No color analysis found.")
-
-		## Implement button for downloading all files from analysis
-
+	# Bulk download button
 	st.subheader("Download All Data")
 
 	# Remove to avoid adding to zip file
@@ -164,45 +144,7 @@ def app():
 			if (os.path.isdir(session_path)) and (not os.path.isfile(zip_path)):
 				shutil.make_archive(zip_path.rstrip(".zip"), "zip", session_path)
 
-	
 	if os.path.isfile(zip_path):
 		with open(zip_path, "rb") as f:
 			st.download_button("Download All Results (ZIP File)", f, file_name=zip_name)
 	
-
-	# TODO remove legacy download
-	#if st.checkbox("Bulk Download"):
-	#	with st.expander("Bulk Data Download"): 
-	#		if (is_demo):
-	#			image_filename = "arabidopsis_tray.jpg"
-	#		else:
-	#			image_filename = st.session_state.user_image_name
-	#			
-	#		dl_files_list = []
-	#
-	#		# TODO change this once config re-added
-	#		if st.checkbox("Config File", value=True):
-	#			dl_files_list.append("analysis_config.json")
-	#
-	#		if st.checkbox("Results Files (CSV & JSON)", value=True):
-	#			dl_files_list.append("results.json")
-	#			dl_files_list.append("results.csv")
-	#			dl_files_list.append("color_results.csv")
-	#
-	#		if st.checkbox("Original Image", value=True):
-	#			dl_files_list.append(image_filename)
-	#
-	#		if st.checkbox("Binary Mask Image", value=True):
-	#			dl_files_list.append("filled_bin_mask_image.png")
-	#
-	#		if st.checkbox("Contour Image", value=True):
-	#			dl_files_list.append("contour_image.png")
-	#
-	#		if st.checkbox("Analysis Image", value=True):
-	#			dl_files_list.append("analyzed_image.png")
-	#
-	#		if st.checkbox("Color Analysis Histograms", value=True):
-	#			hist_file_start = "color_analysis_plant"
-	#			[dl_files_list.append(hist_file) for hist_file in os.listdir(session_path) if (hist_file_start in hist_file)]
-	#
-	#		download_all(st.session_state.session_id, dl_files_list)
