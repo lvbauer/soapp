@@ -160,21 +160,24 @@ def app():
 		plant_name_list = st.session_state.session_config["roi"]["name_list"]
 
 	
-	st.subheader("Plant Sample Labels")
+	st.write("Plant Sample Labels")
 
-	with st.expander("Plant Sample Names"):
-		st.subheader("Name Plant Samples")
-		st.write("Plants are named row-by-row from top to bottom and left to right.")
+	names_col, notes_col = st.columns(2)
 
-		num_rois = len(rois)
-		if (plant_name_list == []):
+	with names_col:
+		with st.expander("Plant Sample Names"):
+			st.subheader("Name Plant Samples")
+			st.write("Plants are named row-by-row from top to bottom and left to right.")
 
-			for idx in range(0, num_rois):
-				plant_name_list.append(f"plant{idx}")
+			num_rois = len(rois)
+			if (plant_name_list == []):
 
-		# Create list of plant names with user input
-		for idx, value in enumerate(plant_name_list):
-			plant_name_list[idx] = st.text_input(f"plant{idx}", value=f"{plant_name_list[idx]}", key=f"plant_name_{idx}", on_change=update_config)
+				for idx in range(0, num_rois):
+					plant_name_list.append(f"plant{idx}")
+
+			# Create list of plant names with user input
+			for idx, value in enumerate(plant_name_list):
+				plant_name_list[idx] = st.text_input(f"plant{idx}", value=f"{plant_name_list[idx]}", key=f"plant_name_{idx}", on_change=update_config)
 
 		# Create plant name list with coords for initial and final print
 		# Format: (plant_name, (coords for in circle), (coords for top of circle))
@@ -201,19 +204,19 @@ def app():
 		
 		plant_notes_list = st.session_state.session_config["roi"]["plant_notes_list"]
 
+	with notes_col:
+		with st.expander("Plant Sample Notes"):
+			st.subheader("Plant Sample Notes")
+			st.write("Plants are commented on row-by-row from top to bottom and left to right.")
 
-	with st.expander("Plant Sample Notes"):
-		st.subheader("Plant Sample Notes")
-		st.write("Plants are commented on row-by-row from top to bottom and left to right.")
+			# Create list of plant names with user input
+			for idx, value in enumerate(plant_notes_list):
+				if (plant_notes_list == []):
+					current_value = None
+				else:
+					current_value = plant_notes_list[idx]
 
-		# Create list of plant names with user input
-		for idx, value in enumerate(plant_notes_list):
-			if (plant_notes_list == []):
-				current_value = None
-			else:
-				current_value = plant_notes_list[idx]
-
-			plant_notes_list[idx] = st.text_input(f"Plant{idx} Notes:", value=current_value, key=f"note_{idx}")
+				plant_notes_list[idx] = st.text_input(f"Plant{idx} Notes:", value=current_value, key=f"note_{idx}")
 
 	# Display the contour image
 	st.subheader("ROI Positions")
