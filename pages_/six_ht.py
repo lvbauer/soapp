@@ -95,7 +95,6 @@ def app():
 			for mod in st.session_state.session_config["preprocess"]["active_list"]:
 				working_image = st.session_state.module_store[mod].work(working_image, st.session_state.session_config["preprocess"]["modules"][mod])
 
-
 			# 2: Masking
 			binary_masks = []
 
