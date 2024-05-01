@@ -6,6 +6,12 @@ import json
 from multipage import MultiPage
 from pages_ import landing_page, zero_upload, one_preprocess, two_masking, three_roi, four_analysis, five_data, six_ht
 
+# Help messages
+RESIZE_FACTOR_HELP = """
+Increase resize factor to increase performance at the expense of display image resolution. Does NOT impact final measurements.
+"""
+
+# Make session storage dir
 @st.cache_resource
 def make_sessions_dir():
   if (not os.path.isdir("session")):
@@ -72,8 +78,8 @@ with st.sidebar:
 	st.subheader("Options:")
 
 	# Resize factor
-	resize_factor = st.number_input("Resize Factor", 1, 5, value=st.session_state.universal_resize_factor, key="universal_resize_factor_input", on_change=on_update)
-	st.caption("Increase resize factor to increase performance at the expense of display image resolution. Does NOT impact final measurements.")
+	resize_factor = st.number_input("Resize Factor", 1, 5, help=RESIZE_FACTOR_HELP,
+								 value=st.session_state.universal_resize_factor, key="universal_resize_factor_input", on_change=on_update)
 
 	# Config file upload
 	st.session_state.user_config = st.file_uploader("Upload Config File", on_change=set_upload_bool)
@@ -89,13 +95,11 @@ with st.sidebar:
 			st.session_state.session_config = json.loads(config_data)
 			st.session_state.upload_bool = True
 
-
 	# Write config file
 	if "session_config" in st.session_state:
 		# Write config file
 		with open(os.path.join(st.session_state.session_path, "analysis_config.json"), "w") as f:
 			json.dump(st.session_state.session_config, f)
-
 
 	# Downloader for config file
 	if (os.path.isfile(os.path.join(st.session_state.session_path, "analysis_config.json"))):
@@ -105,7 +109,5 @@ with st.sidebar:
 				data=f,
 				file_name="analysis_config.json")
 
-
 # Put the app object into session memory
 st.session_state.app_obj = app
-
