@@ -47,6 +47,18 @@ def mean_color_sq(channel_color_dict: dict) -> float:
 
     return mean_val_unsquared
 
+def stdev_color(channel_color_dict: dict, mu: float) -> float:
+
+    val_freq_tups = zip(channel_color_dict["label"], channel_color_dict["value"])
+    
+    stdev_val = 0.0
+    for pixel_value, freq in val_freq_tups:
+        percent_float = freq / 100
+        dev_val = (pixel_value-mu)**2
+        stdev_val += percent_float*dev_val
+    
+    return stdev_val ** 0.5
+
 def write_dict_to_csv(input_dict, csv_out_path):
 
     data_file = open(csv_out_path, "w", newline="")
@@ -142,6 +154,11 @@ def pcv_convert_color(json_in_path, csv_out_path, file_name, color_standard=None
                 color_obs_dict[obs_name_clean][channel_name_clean + "_mean"] = channel_arithmetic_mean
                 color_obs_dict[obs_name_clean][channel_name_clean + "_sq_mean"] = channel_sq_mean
 
+                channel_amean_stdev = stdev_color(channel_dict, channel_arithmetic_mean)
+                channel_sq_stdev = stdev_color(channel_dict, channel_sq_mean)
+
+                color_obs_dict[obs_name_clean][channel_name_clean + "_stdev"] = channel_amean_stdev
+                color_obs_dict[obs_name_clean][channel_name_clean + "_sq_stdev"] = channel_sq_stdev
 
             if (color_standard is not None):
                 
