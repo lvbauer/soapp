@@ -94,7 +94,6 @@ def app():
 		buffer_height = st.session_state.session_config["roi"]["buffer_height"]
 		buffer_width = st.session_state.session_config["roi"]["buffer_width"]
 
-
 	# Sliders: 1) General spacing, 2) Buffer adjustment
 	with col2:
 		buffer_height_adjust = int(st.number_input("Vertical Alignment", min_value=1, max_value=int(img_height), value=int(buffer_height), step=1, key="buffer_h", on_change=update_config))
@@ -111,11 +110,9 @@ def app():
 	with col3:
 		space_height_slider = int(st.number_input("Vertical Space (pixels)", min_value=1, max_value=int(space_height_slider_max), value=int(space_height), step=1, key="spacer_h", on_change=update_config))
 		space_width_slider = int(st.number_input("Horizontal Space (pixels)", min_value=1, max_value=int(space_width_slider_max), value=int(space_width), step=1, key="spacer_w", on_change=update_config))
-	
 
 	space_height = update_val(space_height, space_height_slider)
 	space_width = update_val(space_width, space_width_slider)
-
 
 	# Check if ROI is out of bounds and throw a streamlit error if out of bounds: left and top
 	if ((buffer_width < radius_val) or (buffer_height < radius_val)):
@@ -130,7 +127,6 @@ def app():
 	if (((width_roi_collision) > img_width) or ((height_roi_collision) > img_height)):
 		st.error("ROI out of bounds. Adjust Space Sliders to Continue.")
 		st.stop()
-
 
 	# Inputs:
 	#	 img	 = input image
@@ -158,7 +154,6 @@ def app():
 			st.session_state.session_config["roi"]["name_list"] = []
 		
 		plant_name_list = st.session_state.session_config["roi"]["name_list"]
-
 	
 	st.write("Plant Sample Labels")
 
@@ -252,16 +247,14 @@ def update_config():
 	st.session_state.session_config["roi"]["space_width"] = st.session_state.spacer_w
 	num_plants = int(st.session_state.nrows * st.session_state.ncols)
 
-	plant_name_list_temp = [None] * num_plants
+	# Set default name values
+	plant_name_list_temp = [f"plant{i}" for i in range(num_plants)]
 	plant_note_list_temp = [None] * num_plants
 
 	for idx in range(num_plants):
-
 		if f"plant_name_{idx}" in st.session_state:
 			plant_name_list_temp[idx] = st.session_state[f"plant_name_{idx}"]
 			plant_note_list_temp[idx] = st.session_state[f"note_{idx}"]
 
 	st.session_state.session_config["roi"]["name_list"] = plant_name_list_temp
 	st.session_state.session_config["roi"]["plant_notes_list"] = plant_note_list_temp
-
-
