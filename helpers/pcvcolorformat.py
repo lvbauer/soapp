@@ -191,12 +191,3 @@ def pcv_convert_color(json_in_path, csv_out_path, file_name, color_standard=None
                 color_obs_dict[obs_name_clean] = merge_dicts(color_obs_dict[obs_name_clean], corr_working_dict)
 
     write_dict_to_csv(color_obs_dict, csv_out_path)
-
-
-
-
-
-
-
-
-    
