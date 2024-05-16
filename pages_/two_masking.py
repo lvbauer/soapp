@@ -280,7 +280,7 @@ def app():
 
 
 		st.subheader("Cleaned Image")
-		clean_fill_slider = st.number_input('Size (# px) of object to clean up:', min_value=0, max_value=2000, value=clean_fill_value, step=1, key="clean_fill_val", on_change=update_config)
+		clean_fill_slider = st.number_input('Size (# px) of object to clean up:', min_value=0, value=clean_fill_value, step=1, key="clean_fill_val", on_change=update_config)
 		clean_fill_value = update_val(clean_fill_value, clean_fill_slider)
 		try:
 			fill_image = pcv.fill(bin_img=raw_thresh, size=clean_fill_value)
