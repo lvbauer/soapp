@@ -108,7 +108,7 @@ def app():
 	# Implement download button for formatted CSV
 	if os.path.isfile(csv_results_path):
 		with open(csv_results_path, "r") as f:
-			st.download_button("Download Formatted CSV", f, file_name="results.csv")
+			st.download_button("Download Morphology Results CSV", f, file_name="results.csv")
 	
 	# Implement raw JSON download button
 	if os.path.isfile(color_csv_results_path):
