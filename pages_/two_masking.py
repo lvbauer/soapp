@@ -23,7 +23,7 @@ def app():
 	if "freeze_mask_bool" not in st.session_state:
 		st.session_state.freeze_mask_bool = False
 
-	st.session_state.freeze_mask_bool = st.checkbox("Freeze Mask", value=st.session_state.freeze_mask_bool)
+	#st.session_state.freeze_mask_bool = st.checkbox("Freeze Mask", value=st.session_state.freeze_mask_bool)
 
 	if not st.session_state.freeze_mask_bool:
 		
@@ -132,7 +132,7 @@ def app():
 			thresh_val = update_val(thresh_val, thresh_slide)
 			max_val = update_val(max_val, max_val_slide)
 
-			otsu_bool = st.checkbox("Otsu Auto-Threshhold", value=otsu_bool, key="otsu_0", on_change=update_config)
+			otsu_bool = st.checkbox("Otsu Auto-Threshold", value=otsu_bool, key="otsu_0", on_change=update_config)
 
 			if (otsu_bool):
 				raw_thresh = pcv.threshold.otsu(gray_img=single_colorspace, max_value=max_val, object_type=obj_color)
@@ -221,8 +221,8 @@ def app():
 				channel_dict['thresh_val'] = update_val(channel_dict['thresh_val'], thresh_slide)
 				channel_dict['max_val'] = update_val(channel_dict['max_val'], max_val_slide)
 
-				# Checkbox for otsu auto-threshhold
-				otsu_bool = st.checkbox("Otsu Auto-Threshhold", key=f"otsu_{idx}", value=otsu_bool_list[idx], on_change=update_config)
+				# Checkbox for otsu auto-threshold
+				otsu_bool = st.checkbox("Otsu Auto-Threshold", key=f"otsu_{idx}", value=otsu_bool_list[idx], on_change=update_config)
 				otsu_bool_list[idx] = otsu_bool
 
 				# Make the threshhold
