@@ -116,6 +116,7 @@ def wb_correction(val, ref):
     return ref - val
 
 def calc_veg_indicies(r,g,b):
+    """Function for generating a dictionary of vegetative index values"""
 
     return
 
