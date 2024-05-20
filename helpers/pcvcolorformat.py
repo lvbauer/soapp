@@ -1,7 +1,8 @@
-import json
-import csv
+import json, csv
 import numpy as np
 import cv2
+
+import helpers.vegindex as vi
 
 FREQUENCIES = ['blue_frequencies', 'green_frequencies', 'red_frequencies', 
                'lightness_frequencies', 'green-magenta_frequencies', 'blue-yellow_frequencies', 
@@ -105,7 +106,6 @@ def calc_channel_references(r_ref, g_ref, b_ref):
 def calc_channel_correction(vals, refs):
     # inputs as lists in [R,G,B]
 
-
     r_val, g_val, b_val = vals
     r_ref, g_ref, b_ref = refs
 
@@ -114,6 +114,10 @@ def calc_channel_correction(vals, refs):
 def wb_correction(val, ref):
 
     return ref - val
+
+def calc_veg_indicies(r,g,b):
+
+    return
 
 def pcv_convert_color(json_in_path, csv_out_path, file_name, color_standard=None, color_refs=None):
     
@@ -160,6 +164,8 @@ def pcv_convert_color(json_in_path, csv_out_path, file_name, color_standard=None
                 color_obs_dict[obs_name_clean][channel_name_clean + "_stdev"] = channel_amean_stdev
                 color_obs_dict[obs_name_clean][channel_name_clean + "_sq_stdev"] = channel_sq_stdev
 
+            # TODO calculate indicies here
+
             if (color_standard is not None):
                 
                 corr_working_dict = {}
@@ -187,6 +193,8 @@ def pcv_convert_color(json_in_path, csv_out_path, file_name, color_standard=None
                     for channel in color_obs_dict[obs_name_clean].keys():
                         if (channel.startswith(COLOR_ABBREV_REF[ref_channel])) and (channel.endswith("_sq_mean")):
                             corr_working_dict[channel + "_corr"] = color_obs_dict[obs_name_clean][channel] - ref_val
+
+                # TODO calculate indicies on wb_corr rgb here
 
                 color_obs_dict[obs_name_clean] = merge_dicts(color_obs_dict[obs_name_clean], corr_working_dict)
 
