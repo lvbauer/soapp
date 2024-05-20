@@ -115,10 +115,11 @@ def wb_correction(val, ref):
 
     return ref - val
 
-def calc_veg_indicies(r,g,b):
+def calc_veg_indicies(r,g,b, label=""):
     """Function for generating a dictionary of vegetative index values"""
-
-    return
+    vi_dict = vi.calc_all_indices(r,g,b)
+    vi_dict = {key+label: value for key, value in vi_dict.items()}
+    return vi_dict
 
 def pcv_convert_color(json_in_path, csv_out_path, file_name, color_standard=None, color_refs=None):
     
@@ -166,6 +167,21 @@ def pcv_convert_color(json_in_path, csv_out_path, file_name, color_standard=None
                 color_obs_dict[obs_name_clean][channel_name_clean + "_sq_stdev"] = channel_sq_stdev
 
             # TODO calculate indicies here
+            if True:
+                r_mean = color_obs_dict[obs_name_clean]["red_mean"]
+                g_mean = color_obs_dict[obs_name_clean]["green_mean"]
+                b_mean = color_obs_dict[obs_name_clean]["blue_mean"]
+                vi_mean_dict = calc_veg_indicies(r_mean, g_mean, b_mean, label="_mean")
+                
+                color_obs_dict[obs_name_clean].update(vi_mean_dict)
+
+                r_sq_mean = color_obs_dict[obs_name_clean]["red_sq_mean"]
+                g_sq_mean = color_obs_dict[obs_name_clean]["green_sq_mean"]
+                b_sq_mean = color_obs_dict[obs_name_clean]["blue_sq_mean"]
+                vi_sq_mean_dict = calc_veg_indicies(r_sq_mean, g_sq_mean, b_sq_mean, label="_sq_mean")
+
+                color_obs_dict[obs_name_clean].update(vi_sq_mean_dict)
+
 
             if (color_standard is not None):
                 

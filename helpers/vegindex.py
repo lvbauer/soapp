@@ -2,6 +2,7 @@ import numpy as np
 import math
 
 # Normalize values
+# These give reflectance as a percentage of total reflectance
 def norm_r(r,g,b): return r / sum((r,g,b))
 def norm_g(r,g,b): return g / sum((r,g,b))
 def norm_b(r,g,b): return b / sum((r,g,b))
@@ -29,14 +30,14 @@ def calc_GRVI(Rr, Rg, Rb):
     """
     Original paper: https://doi.org/10.1016/0034-4257(79)90013-0
     Reference Paper: https://doi.org/10.1016/j.jag.2015.02.012
-    Uses relative RGB values, (funcs: norm_r, norm_g, norm_b)
+    Uses relative reflectance RGB values, (funcs: norm_r, norm_g, norm_b)
     """
     return float((Rg - Rr) / (Rg + Rr))
 
 def calc_MGRVI(Rr, Rg, Rb):
     """
     Cite: https://doi.org/10.1016/j.jag.2015.02.012
-    Uses relative RGB values, (funcs: norm_r, norm_g, norm_b)
+    Uses relative reflectance RGB values, (funcs: norm_r, norm_g, norm_b)
     """
     Rg_sq = Rg**2
     Rr_sq = Rr**2
@@ -47,13 +48,68 @@ def calc_MGRVI(Rr, Rg, Rb):
 def calc_RGBVI(Rr, Rg, Rb):
     """
     Cite: https://doi.org/10.1016/j.jag.2015.02.012
-    Uses relative RGB values, (funcs: norm_r, norm_g, norm_b)
+    Uses relative reflectance RGB values, (funcs: norm_r, norm_g, norm_b)
     """
     Rg_sq = Rg**2
     RbRr_prod = Rb*Rr
     numer = Rg_sq - RbRr_prod
     denom = Rg_sq + RbRr_prod
     return float(numer/denom)
+
+def calc_NGRDI(Rr, Rg, Rb):
+    """
+    Cite: Tucker (1979)
+    Does this use relative reflectance or absolute, I think relative
+    """
+    numer = Rg-Rr
+    denom = Rg+Rr
+    return float(numer/denom)
+
+def calc_GLI(Rr, Rg, Rb):
+    """
+    Cite: Louhaichi et al., (2001)
+    https://doi.org/10.1080/10106040108542184
+    Uses absolute values 0 to 255
+    """
+    numer = (2*Rg)-Rr-Rb
+    denom = (2*Rg)+Rr-Rb
+    return float(numer/denom)
+
+def calc_VARIgreen(Rr, Rg, Rb):
+    """
+    Cite: Gitelson et al., (2002)
+    https://doi.org/10.1016/S0034-4257(01)00289-9
+    Original paper uses Relative Reflectance %
+    VARI_(green) is name of index
+    """
+    numer = Rg-Rr
+    denom = Rg+Rr-Rb
+    return float(numer/denom)
+
+# Wrap function
+
+def calc_all_indices(r, g, b):
+
+    vi_dict = {}
+    
+    vi_dict["index_GI"] = calc_green_index(r,g,b)
+    vi_dict["index_GLI"] = calc_GLI(r,g,b)
+
+    Rr, Rg, Rb = norm_rgb(r,g,b)
+    vi_dict["index_Rr"] = Rr
+    vi_dict["index_Rg"] = Rg
+    vi_dict["index_Rb"] = Rb
+
+    vi_dict["index_GRVI"] = calc_GRVI(Rr,Rg,Rb)
+    vi_dict["index_MGRVI"] = calc_MGRVI(Rr,Rg,Rb)
+    vi_dict["index_RGBVI"] = calc_RGBVI(Rr,Rg,Rb)
+
+    vi_dict["index_VARIgreen"] = calc_VARIgreen(Rr,Rg,Rb)
+
+    return vi_dict
+
+
+# Helper functions
 
 def run_arr(rgb_arr, func):
 
