@@ -9,6 +9,9 @@ def norm_b(r,g,b): return b / sum((r,g,b))
 
 def norm_rgb(r,g,b):
     base = r+g+b
+
+    if (base == 0): return None, None, None
+
     r_norm = float(r / base)
     g_norm = float(g / base)
     b_norm = float(b / base)
@@ -21,6 +24,9 @@ def calc_green_index(r, g, b):
     """
 
     preGI_b = ((255 - abs(g-165)) + (255-abs(r-37.5)) + (255-abs(b-37.5))) / (3*255)
+    
+    if (preGI_b == 0): return None
+    
     preGI_c = preGI_b / (1-preGI_b)
     green_index = preGI_c / 12
 
@@ -32,7 +38,11 @@ def calc_GRVI(Rr, Rg, Rb):
     Reference Paper: https://doi.org/10.1016/j.jag.2015.02.012
     Uses relative reflectance RGB values, (funcs: norm_r, norm_g, norm_b)
     """
-    return float((Rg - Rr) / (Rg + Rr))
+    numer = Rg - Rr
+    denom = Rg + Rr
+
+    if (denom == 0): return None
+    return float(numer/denom)
 
 def calc_MGRVI(Rr, Rg, Rb):
     """
@@ -43,6 +53,8 @@ def calc_MGRVI(Rr, Rg, Rb):
     Rr_sq = Rr**2
     numer = Rg_sq-Rr_sq
     denom = Rg_sq+Rr_sq
+    
+    if denom == 0: return None
     return float(numer / denom)
 
 def calc_RGBVI(Rr, Rg, Rb):
@@ -54,6 +66,8 @@ def calc_RGBVI(Rr, Rg, Rb):
     RbRr_prod = Rb*Rr
     numer = Rg_sq - RbRr_prod
     denom = Rg_sq + RbRr_prod
+
+    if (denom == 0): return None
     return float(numer/denom)
 
 def calc_NGRDI(Rr, Rg, Rb):
@@ -63,6 +77,8 @@ def calc_NGRDI(Rr, Rg, Rb):
     """
     numer = Rg-Rr
     denom = Rg+Rr
+
+    if (denom == 0): return None
     return float(numer/denom)
 
 def calc_GLI(Rr, Rg, Rb):
@@ -73,6 +89,8 @@ def calc_GLI(Rr, Rg, Rb):
     """
     numer = (2*Rg)-Rr-Rb
     denom = (2*Rg)+Rr-Rb
+
+    if (denom == 0): return None
     return float(numer/denom)
 
 def calc_VARIgreen(Rr, Rg, Rb):
@@ -84,6 +102,8 @@ def calc_VARIgreen(Rr, Rg, Rb):
     """
     numer = Rg-Rr
     denom = Rg+Rr-Rb
+
+    if (denom == 0): return None
     return float(numer/denom)
 
 # Wrap function
@@ -96,6 +116,9 @@ def calc_all_indices(r, g, b):
     vi_dict["index_GLI"] = calc_GLI(r,g,b)
 
     Rr, Rg, Rb = norm_rgb(r,g,b)
+    
+    if (Rr == None): return vi_dict
+
     vi_dict["index_Rr"] = Rr
     vi_dict["index_Rg"] = Rg
     vi_dict["index_Rb"] = Rb
