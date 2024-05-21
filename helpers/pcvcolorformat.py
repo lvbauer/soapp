@@ -211,8 +211,25 @@ def pcv_convert_color(json_in_path, csv_out_path, file_name, color_standard=None
                         if (channel.startswith(COLOR_ABBREV_REF[ref_channel])) and (channel.endswith("_sq_mean")):
                             corr_working_dict[channel + "_corr"] = color_obs_dict[obs_name_clean][channel] - ref_val
 
-                # TODO calculate indicies on wb_corr rgb here
-
                 color_obs_dict[obs_name_clean] = merge_dicts(color_obs_dict[obs_name_clean], corr_working_dict)
+                
+                # TODO calculate indicies on wb_corr rgb here
+                if True:
+                    # Indices for arithmetic mean
+                    r_mean_corr = color_obs_dict[obs_name_clean]["red_mean_corr_wb"]
+                    g_mean_corr = color_obs_dict[obs_name_clean]["green_mean_corr_wb"]
+                    b_mean_corr = color_obs_dict[obs_name_clean]["blue_mean_corr_wb"]
+                    vi_mean_dict = calc_veg_indicies(r_mean_corr, g_mean_corr, b_mean_corr, label="_mean_corr_wb")
+                    
+                    color_obs_dict[obs_name_clean].update(vi_mean_dict)
+
+                    # Indices for square mean
+                    r_sq_mean_corr = color_obs_dict[obs_name_clean]["red_sq_mean_corr_wb"]
+                    g_sq_mean_corr = color_obs_dict[obs_name_clean]["green_sq_mean_corr_wb"]
+                    b_sq_mean_corr = color_obs_dict[obs_name_clean]["blue_sq_mean_corr_wb"]
+                    vi_sq_mean_dict = calc_veg_indicies(r_sq_mean_corr, g_sq_mean_corr, b_sq_mean_corr, label="_sq_mean_corr_wb")
+
+                    color_obs_dict[obs_name_clean].update(vi_sq_mean_dict)
+
 
     write_dict_to_csv(color_obs_dict, csv_out_path)
