@@ -6,6 +6,10 @@ import json
 from multipage import MultiPage
 from pages_ import landing_page, zero_upload, one_preprocess, two_masking, three_roi, four_analysis, five_data, six_ht
 
+# PIL import for max size
+import PIL.Image
+PIL.Image.MAX_IMAGE_PIXELS = None
+
 # Help messages
 RESIZE_FACTOR_HELP = """
 Increase resize factor to increase performance at the expense of display image resolution. Does NOT impact final measurements.
