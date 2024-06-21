@@ -106,6 +106,31 @@ def calc_VARIgreen(Rr, Rg, Rb):
     if (denom == 0): return None
     return float(numer/denom)
 
+# Background indices
+def calc_SCI(r,g,b):
+    """
+    Cite: Mathieu et al., (1998)
+    https://doi.org/10.1016/S0034-4257(98)00030-3
+    Original paper users raw values
+
+    """
+    numer = r-g
+    denom = r+g
+
+    if (denom == 0): return None
+    return float(numer/denom)
+
+def calc_SCI_arr(r,g,b):
+    """
+    Cite: Mathieu et al., (1998)
+    https://doi.org/10.1016/S0034-4257(98)00030-3
+    Original paper users raw values
+
+    """
+    numer = r-g
+    denom = r+g
+    return numer/denom
+
 # Wrap function
 
 def calc_all_indices(r, g, b):

@@ -2,10 +2,9 @@ import streamlit as st
 from plantcv import plantcv as pcv
 from PIL import Image
 
-from helpers import pcvconvert
 from helpers.pcvcolorformat import pcv_convert_color
 from helpers.pcvmorphoformat import pcv_convert_morpho
-
+from helpers import pcvmask
 
 import numpy as np
 import shutil
@@ -28,6 +27,10 @@ def app():
 		# Catch missing user_image_list
 		if ("user_image_list" not in st.session_state):
 			st.error("No image list found. Check that you have uploaded your images.")
+			st.stop()
+
+		elif (len(st.session_state.user_image_list) == 0):
+			st.error("Please upload images to use high throughput functionality.")
 			st.stop()
 
 		# Remove old bulk run path to avoid conflict
@@ -99,32 +102,8 @@ def app():
 			binary_masks = []
 
 			for idx, channel in enumerate(st.session_state.session_config["masking"]["colorspaces"]):
-
-				# Determine binarization method
-				if st.session_state.session_config["masking"]["otsu"][idx]:
-					bin_method = "otsu"
-				else:
-					bin_method = "binary"
-
-				# Get thresh and max values
-				working_thresh = st.session_state.session_config["masking"]["masking_vals"][idx][0]
-				working_max = st.session_state.session_config["masking"]["masking_vals"][idx][1]
-
-				# Get object color: (0 = dark; 1 = light)
-				if st.session_state.session_config["masking"]["obj_color"][idx] == 0:
-					working_obj_color = "DARK"
-				else:
-					working_obj_color = "LIGHT"
-
-				working_mask = binary_mask_channel(
-					working_image, 
-					channel,
-					bin_method,
-					working_thresh,
-					working_max,
-					working_obj_color
-					)
-
+				channel_dict = st.session_state.session_config["masking"][channel]
+				working_mask = pcvmask.binary_mask_channel_dict(working_image, channel, channel_dict)
 				binary_masks.append(working_mask)
 
 			if len(binary_masks) == 0:

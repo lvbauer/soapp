@@ -1,0 +1,169 @@
+import streamlit as st
+
+from plantcv import plantcv as pcv
+import numpy as np
+import cv2
+
+from helpers import vegindex as vidx
+
+MASK_METHODS = ["BINARY", "OTSU"]
+COLOR_INT_TO_STR = {0:"DARK",1:"LIGHT"}
+BOOL_COMP_LIST = ["AND", "OR", "XOR"]
+
+def mask_default_vals(colorspace):
+    
+    default_dict = {}
+
+    default_dict["method"] = "BINARY"
+    
+    default_dict["thresh_val"] = 100
+    default_dict["max_val"] = 255
+    default_dict["obj_color"] = "DARK"
+    
+    return default_dict
+
+def mask_ui(img, colorspace):
+    
+    if (colorspace not in st.session_state.session_config["masking"]):
+        st.session_state.session_config["masking"][colorspace] = mask_default_vals(colorspace)
+
+    update_config(colorspace)
+
+    st.subheader(f"Colorspace: {colorspace}")
+    
+    work_method = st.selectbox("Masking Method", options=MASK_METHODS, 
+                 index=MASK_METHODS.index(st.session_state.session_config["masking"][colorspace]["method"]),
+                 key=f"{colorspace}_mask_method", on_change=update_config(colorspace))
+
+    
+    if work_method == "BINARY":
+        bin_col1, bin_col2 = st.columns(2)
+        with bin_col1:
+            work_thresh_val = st.number_input('Threshold', min_value=0, max_value=255, 
+                                                value=st.session_state.session_config["masking"][colorspace]["thresh_val"], 
+                                            step=1, on_change=update_config(colorspace), key=f"{colorspace}_mask_thresh_val")
+        with bin_col2:
+            #work_max_val = st.number_input('Max Value', min_value=0, max_value=255, 
+            #                            value=st.session_state.session_config["masking"][colorspace]["max_val"], 
+            #                            step=1, on_change=update_config(colorspace), key=f"{colorspace}_mask_max_val")
+            pass
+
+    elif work_method == "otsu":
+        # Otsu does not need any special inputs
+        pass
+
+    else:
+        pass
+
+    work_obj_color = st.radio(label="Object Color", options=["DARK", "LIGHT"], index=st.session_state.session_config["masking"]["obj_color"][0], 
+                                key=f"{colorspace}_mask_obj_color", on_change=update_config(colorspace))
+
+    bin_mask = binary_mask_channel_dict(img, colorspace, channel_dict=st.session_state.session_config["masking"][colorspace])
+
+
+    st.image(bin_mask)
+
+    return bin_mask
+
+def binary_mask_channel(img, channel, method, thresh_val, max_val, obj_type):
+    """
+    Single expandable function for handling channel output
+    """
+
+    # Channel references
+    hsv = {"H", "S", "V"}
+    lab = {"L", "A", "B"}
+
+    # Clean obj_type
+    if isinstance(obj_type, int):
+        obj_type = COLOR_INT_TO_STR[obj_type]
+
+    # Create gray image for binarization
+    if channel.upper() in lab:
+        gray_img = pcv.rgb2gray_lab(
+            rgb_img=img, 
+            channel=channel
+            )
+
+    elif channel.upper() in hsv:
+        gray_img = pcv.rgb2gray_hsv(
+            rgb_img=img, 
+            channel=channel
+            )
+        
+    elif channel.upper() == "G_RADIANCE":
+        gray_img = vidx.run_arr(img,vidx.norm_g) * 255
+        gray_img = gray_img.astype(np.uint8)
+
+    elif channel.upper() == "SCI":
+        gray_img = vidx.run_arr(img, vidx.calc_SCI_arr) *255
+        gray_img = gray_img.astype(np.uint8)
+
+    else:
+        pass
+
+
+    # Create binary image using specified type
+    if method == "BINARY":
+        bin_map = pcv.threshold.binary(
+            gray_img=gray_img, 
+            threshold=thresh_val, 
+            max_value=max_val, 
+            object_type=obj_type
+            )
+
+    elif method == "OTSU":
+        bin_map = pcv.threshold.otsu(			
+            gray_img=gray_img, 
+            max_value=max_val, 
+            object_type=obj_type
+            )
+
+    else:
+        # Expand here with other methods
+        pass
+
+    return bin_map
+
+def binary_mask_channel_dict(img, channel, channel_dict):
+    """Wrapper for binary_mask_channel for high throughput functionality
+    """
+
+    working_method = channel_dict["method"]
+    working_thresh_val = channel_dict["thresh_val"]
+    working_max_val = channel_dict["max_val"]
+    working_obj_color = channel_dict["obj_color"]
+
+    bin_mask = binary_mask_channel(img, channel, 
+                                   method=working_method,
+                                   thresh_val=working_thresh_val,
+                                   max_val=working_max_val,
+                                   obj_type=working_obj_color)
+
+    return bin_mask
+
+def pcv_mask_logic_op(mask1, mask2, boolean):
+	if (boolean.upper() == "AND"):
+		return pcv.logical_and(mask1, mask2)
+	elif (boolean.upper() == "OR"):
+		return pcv.logical_or(mask1, mask2)
+	elif (boolean.upper() == "XOR"):
+		return pcv.logical_xor(mask1, mask2)
+
+def update_config(colorspace):
+    
+    # Universal option catch block
+    try:
+        st.session_state.session_config["masking"][colorspace]["method"] = st.session_state[f"{colorspace}_mask_method"]
+        st.session_state.session_config["masking"][colorspace]["obj_color"] = st.session_state[f"{colorspace}_mask_obj_color"]
+
+    except:
+        pass
+
+    # Binary option catch block
+    try:		
+        st.session_state.session_config["masking"][colorspace]["thresh_val"] = st.session_state[f"{colorspace}_mask_thresh_val"]
+        st.session_state.session_config["masking"][colorspace]["max_val"] = st.session_state[f"{colorspace}_mask_max_val"]
+
+    except:
+        pass
