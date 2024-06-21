@@ -100,7 +100,10 @@ with st.sidebar:
 
 	# Convert old masking config values
 	if ("masking" in st.session_state.session_config) and ("masking_vals" in st.session_state.session_config["masking"]):
-		st.session_state.session_config["masking"] = convert_old_masking(st.session_state.session_config["masking"])
+		try:
+			st.session_state.session_config["masking"] = convert_old_masking(st.session_state.session_config["masking"])
+		except:
+			pass
 
 	# Write config file
 	if "session_config" in st.session_state:
