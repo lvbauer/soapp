@@ -11,6 +11,29 @@ COLOR_OPTIONS = ["DARK", "LIGHT"]
 COLOR_INT_TO_STR = {0:"DARK",1:"LIGHT"}
 BOOL_COMP_LIST = ["AND", "OR", "XOR"]
 
+def convert_old_masking(mask_config):
+     
+    for cs_idx, cs in mask_config["colorspaces"]:
+        work_dict = {}
+
+        # convert method
+        if (mask_config["otsu"][cs_idx] == True):
+            work_dict["method"] = "OTSU"
+        else:
+            work_dict["method"] = "BINARY"
+
+        # Convert mask vals
+        work_dict["thresh_val"] = mask_config["masking_vals"][cs_idx][0]
+        work_dict["max_val"] = mask_config["masking_vals"][cs_idx][1]
+        
+        # convert object color vals
+        work_dict["obj_color"] = COLOR_OPTIONS[mask_config["obj_color"][cs_idx]]
+
+        mask_config[cs] = work_dict
+    
+    return mask_config
+          
+
 def mask_default_vals(colorspace):
     
     default_dict = {}
