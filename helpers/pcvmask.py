@@ -7,6 +7,7 @@ import cv2
 from helpers import vegindex as vidx
 
 MASK_METHODS = ["BINARY", "OTSU"]
+COLOR_OPTIONS = ["DARK", "LIGHT"]
 COLOR_INT_TO_STR = {0:"DARK",1:"LIGHT"}
 BOOL_COMP_LIST = ["AND", "OR", "XOR"]
 
@@ -55,7 +56,7 @@ def mask_ui(img, colorspace):
     else:
         pass
 
-    work_obj_color = st.radio(label="Object Color", options=["DARK", "LIGHT"], index=st.session_state.session_config["masking"]["obj_color"][0], 
+    work_obj_color = st.radio(label="Object Color", options=COLOR_OPTIONS, index=COLOR_OPTIONS.index(st.session_state.session_config["masking"][colorspace]["obj_color"]), 
                                 key=f"{colorspace}_mask_obj_color", on_change=update_config(colorspace))
 
     bin_mask = binary_mask_channel_dict(img, colorspace, channel_dict=st.session_state.session_config["masking"][colorspace])
