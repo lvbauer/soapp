@@ -13,7 +13,6 @@ BOOL_KEY_PREFIX = "masking_bool_op_"
 
 def app():
 
-
 	session_path = st.session_state.session_path
 	
 	# Check that image is not None
@@ -52,14 +51,6 @@ def app():
 														"clean_fill_val": 200}
 			
 			config = st.session_state.session_config["masking"]
-
-		"""
-		Implements selection of colormasks, singular and compound, based color channels
-		"""
-		# TODO: Decide if is necessary for workflow
-		# Display the original image
-		##st.subheader("Uploaded Image")
-		##st_display_image(img,  os.path.join(session_path, "original_image.png"), resize_factor=resize_factor)
 
 		# Generate and display colorspaces
 		colorspaces = pcv.visualize.colorspaces(rgb_img=img, original_img=False)
@@ -129,8 +120,7 @@ def app():
 						break
 					else:
 						working_mask = working_mask_list[op_idx+1]
-						bool_op_mask = pcv_mask_logic_op(bool_op_mask, working_mask, op)
-									
+						bool_op_mask = pcv_mask_logic_op(bool_op_mask, working_mask, op)				
 			else:
 				bool_op_mask = working_mask_list[0]	
 
@@ -172,7 +162,6 @@ def pcv_mask_logic_op(mask1, mask2, boolean):
 		return pcv.logical_xor(mask1, mask2)
 
 def bool_update(num):
-
 	working_bool_ops = []
 	for i in range(num-1):
 		working_bool_op_key = BOOL_KEY_PREFIX + str(i)
@@ -184,10 +173,8 @@ def bool_update(num):
 			session_ops_list = st.session_state.session_config["masking"]["log_ops"]
 			if i < len(session_ops_list):
 				working_bool_ops.append(session_ops_list[i])
-			
 			# Put in default value
 			working_bool_ops.append("AND")
-
 	st.session_state.session_config["masking"]["log_ops"] = working_bool_ops
 
 def update_config():
