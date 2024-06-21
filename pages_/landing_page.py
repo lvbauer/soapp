@@ -2,24 +2,9 @@ import streamlit as st
 from helpers import pcvfunc as pcvf
 import os
 
-
-
 def app():
-    ######################
-    # Page Title
-    ######################
 
-    #st.title("""
-    #PlantCV in Browser
-
-    #This app builds an in-browser PlantCV sandbox.
-
-    #***
-    #""")
-
-    ######################
-    # Handle sessionID
-    ######################
+    st.title("SOApp: Simple Online Automated Plant Phenomics")
 
     # Generate new session automatically
     if (st.session_state.first_run_bool):

@@ -5,6 +5,7 @@ import json
 # Custom imports 
 from multipage import MultiPage
 from pages_ import landing_page, zero_upload, one_preprocess, two_masking, three_roi, four_analysis, five_data, six_ht
+from helpers.pcvmask import convert_old_masking
 
 # PIL import for max size
 import PIL.Image
@@ -58,9 +59,8 @@ if ("session_data" not in st.session_state):
 	st.session_state.user_config = None
 	st.session_state.universal_resize_factor = 1
 
-
 # Title of the main page
-st.title("SOApp: Simple Online Automated Plant Phenomics")
+#st.title("SOApp: Simple Online Automated Plant Phenomics")
 
 # Add all your applications (pages) here
 app.add_page("Welcome Page", landing_page.app)
@@ -71,7 +71,6 @@ app.add_page("Step 3: Set ROIs", three_roi.app)
 app.add_page("Step 4: Run Analysis", four_analysis.app)
 app.add_page("Step 5: Get Data", five_data.app)
 app.add_page("Bulk Process", six_ht.app)
-
 
 # The main app
 st.sidebar.subheader("Navigation:")
@@ -98,6 +97,13 @@ with st.sidebar:
 			config_data = st.session_state.user_config.getvalue().decode("utf-8")
 			st.session_state.session_config = json.loads(config_data)
 			st.session_state.upload_bool = True
+
+	# Convert old masking config values
+	if ("masking" in st.session_state.session_config) and ("masking_vals" in st.session_state.session_config["masking"]):
+		try:
+			st.session_state.session_config["masking"] = convert_old_masking(st.session_state.session_config["masking"])
+		except:
+			pass
 
 	# Write config file
 	if "session_config" in st.session_state:
