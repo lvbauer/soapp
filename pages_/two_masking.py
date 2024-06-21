@@ -48,11 +48,8 @@ def app():
 		else:
 			config_bool = False
 			st.session_state.session_config["masking"] = {"colorspaces": ["A"],
-														"masking_vals": [(100, 255)],
 														"log_ops": ["AND"],
-														"obj_color": [0],
-														"clean_fill_val": 200,
-														"otsu": [False]}
+														"clean_fill_val": 200}
 			
 			config = st.session_state.session_config["masking"]
 
@@ -79,25 +76,15 @@ def app():
 		selections = st.multiselect("Colorspaces:", options=COLORSPACES_LIST, default=st.session_state.session_config["masking"]["colorspaces"], 
 									key="colorspaces_select", on_change=update_config)
 		
-		# For Config, selections made through setting the 'default' as the config provided channels
-		#colorspaces_start = selections
-		# Sets for checking which function to use for masking
-		hsv = {"H", "S", "V"}
-		lab = {"L", "A", "B"}
-
 		# Initial values
 		# TODO is this still needed
 		if (config_bool):
 			try:
 				clean_fill_value = config_mask["clean_fill_val"]
-				thresh_val = config_mask["masking_vals"][0][0]
-				max_val = config_mask["masking_vals"][0][1]
 			except:
 				st.error("Please select colorspaces.")
 				st.stop()
 		else:
-			thresh_val = 100
-			max_val = 255
 			clean_fill_value = 200
 
 		# List storing current channel bin masks
@@ -202,7 +189,6 @@ def bool_update(num):
 			working_bool_ops.append("AND")
 
 	st.session_state.session_config["masking"]["log_ops"] = working_bool_ops
-
 
 def update_config():
 	# Update colorspaces
