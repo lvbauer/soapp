@@ -87,7 +87,6 @@ def updateConfig():
     """
     Function called to update config directly on update of config in render()
     """
-
     st.session_state.session_config["preprocess"]["modules"][CONFIG_NAME]["top_bound"] = int(st.session_state["_crop_topb"])
     st.session_state.session_config["preprocess"]["modules"][CONFIG_NAME]["bottom_bound"] = int(st.session_state["_crop_bottomb"])
     st.session_state.session_config["preprocess"]["modules"][CONFIG_NAME]["left_bound"] = int(st.session_state["_crop_leftb"])
