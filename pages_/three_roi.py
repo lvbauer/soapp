@@ -104,14 +104,10 @@ def app():
 	buffer_height = update_val(buffer_height, buffer_height_adjust)
 	buffer_width = update_val(buffer_width, buffer_width_adjust)
 
-	# Max value for spacer sliders
-	space_height_slider_max = ((img_height // (ncols + 1)) * (ncols + 2))
-	space_width_slider_max = ((img_height // (nrows + 1)) * (nrows + 2))
-
 	# Number input for spacers
 	with col3:
-		space_height_slider = int(st.number_input("Vertical Space (pixels)", min_value=1, max_value=int(space_height_slider_max), value=int(space_height), step=1, key="spacer_h", on_change=update_config))
-		space_width_slider = int(st.number_input("Horizontal Space (pixels)", min_value=1, max_value=int(space_width_slider_max), value=int(space_width), step=1, key="spacer_w", on_change=update_config))
+		space_height_slider = int(st.number_input("Vertical Space (pixels)", min_value=1, max_value=int(img_height), value=int(space_height), step=1, key="spacer_h", on_change=update_config))
+		space_width_slider = int(st.number_input("Horizontal Space (pixels)", min_value=1, max_value=int(img_width), value=int(space_width), step=1, key="spacer_w", on_change=update_config))
 
 	space_height = update_val(space_height, space_height_slider)
 	space_width = update_val(space_width, space_width_slider)
