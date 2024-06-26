@@ -6,10 +6,17 @@ import cv2
 
 from helpers import vegindex as vidx
 
+# Lookup arrays (index dependent)
 MASK_METHODS = ["BINARY", "OTSU"]
 COLOR_OPTIONS = ["DARK", "LIGHT"]
 COLOR_INT_TO_STR = {0:"DARK",1:"LIGHT"}
+
+# critical information
 BOOL_COMP_LIST = ["AND", "OR", "XOR"]
+COLORSPACES_LIST = ["H", "S", "V", "L", "A", "B",]
+
+def get_cs_list(): return COLORSPACES_LIST
+def get_bool_list(): return BOOL_COMP_LIST
 
 def convert_old_masking(mask_config):
      

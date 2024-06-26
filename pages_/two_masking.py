@@ -3,11 +3,11 @@ import os
 from helpers.displayimg import *
 from cv2 import cvtColor, COLOR_BGR2RGB
 
-from helpers.pcvmask import mask_ui
+from helpers.pcvmask import mask_ui, get_cs_list, get_bool_list
 
 # List of available colorspaces for reference
-COLORSPACES_LIST = ["H", "S", "V", "L", "A", "B",]
-BOOL_COMP_LIST = ["AND", "OR", "XOR"]
+COLORSPACES_LIST = get_cs_list()
+BOOL_COMP_LIST = get_bool_list()
 
 BOOL_KEY_PREFIX = "masking_bool_op_"
 
