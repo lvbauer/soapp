@@ -13,12 +13,15 @@ COLOR_INT_TO_STR = {0:"DARK",1:"LIGHT"}
 
 # critical information
 BOOL_COMP_LIST = ["AND", "OR", "XOR"]
-COLORSPACES_LIST = ["H", "S", "V", "L", "A", "B",]
+COLORSPACES_LIST = ["H", "S", "V", "L", "A", "B","BGI"]
 
 def get_cs_list(): return COLORSPACES_LIST
 def get_bool_list(): return BOOL_COMP_LIST
 
 def convert_old_masking(mask_config):
+    """
+    Function for forward dating the old masking format
+    """
      
     for cs_idx, cs in enumerate(mask_config["colorspaces"]):
         try:
@@ -133,6 +136,13 @@ def binary_mask_channel(img, channel, method, thresh_val, max_val, obj_type):
         gray_img = vidx.run_arr(img, vidx.calc_SCI_arr) *255
         gray_img = gray_img.astype(np.uint8)
 
+    elif channel.upper() == "BGI":
+        bgi_max = 255
+        bgi_min = 0
+
+        gray_img = vidx.run_arr(img, vidx.calc_BGI_arr)
+        gray_img = norm_channel_uint8(gray_img, bgi_max, bgi_min)
+
     else:
         pass
 
@@ -158,6 +168,19 @@ def binary_mask_channel(img, channel, method, thresh_val, max_val, obj_type):
         pass
 
     return bin_map
+
+def norm_channel_uint8(img_arr, max_val, min_val):
+    """
+    Fit array to 0-255 np.unint8 values.
+    min & max values are inclusive
+    """
+    norm_arr = linear_normalization(img_arr, min_val, max_val) * 255
+    return norm_arr.astype(np.uint8)
+
+def linear_normalization(x, minval, maxval):
+    numer = x-minval
+    denom = maxval-minval
+    return numer/denom
 
 def binary_mask_channel_dict(img, channel, channel_dict):
     """Wrapper for binary_mask_channel for high throughput functionality

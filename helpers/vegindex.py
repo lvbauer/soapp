@@ -122,6 +122,7 @@ def calc_SCI(r,g,b):
 
 def calc_SCI_arr(r,g,b):
     """
+    Array function
     Cite: Mathieu et al., (1998)
     https://doi.org/10.1016/S0034-4257(98)00030-3
     Original paper users raw values
@@ -129,6 +130,27 @@ def calc_SCI_arr(r,g,b):
     """
     numer = r-g
     denom = r+g
+    return numer/denom
+
+def calc_BGI(r,g,b):
+    """
+    Cite:
+    """
+
+    numer = b
+    denom = g
+
+    if (denom == 0): return None
+    return float(numer/denom)
+
+def calc_BGI_arr(r,g,b):
+    """
+    Cite:
+    """
+
+    numer = b
+    denom = g
+
     return numer/denom
 
 # Wrap function
