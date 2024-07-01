@@ -7,7 +7,7 @@ import cv2
 from helpers import vegindex as vidx
 
 # Lookup arrays (index dependent)
-MASK_METHODS = ["BINARY", "OTSU"]
+MASK_METHODS = ["BINARY", "OTSU", "RANGE"]
 COLOR_OPTIONS = ["DARK", "LIGHT"]
 COLOR_INT_TO_STR = {0:"DARK",1:"LIGHT"}
 
@@ -56,6 +56,8 @@ def mask_default_vals(colorspace):
     default_dict["thresh_val"] = 100
     default_dict["max_val"] = 255
     default_dict["obj_color"] = "DARK"
+    default_dict["thresh_val_upper"] = 255
+    default_dict["thresh_val_lower"] = 0
     
     return default_dict
 
@@ -85,9 +87,18 @@ def mask_ui(img, colorspace):
             #                            step=1, on_change=update_config(colorspace), key=f"{colorspace}_mask_max_val")
             pass
 
-    elif work_method == "otsu":
+    elif work_method == "OTSU":
         # Otsu does not need any special inputs
         pass
+
+    elif work_method == "RANGE":
+        work_thresh_val_upper = st.number_input('Upper Threshold', min_value=0, max_value=255, 
+                                                value=st.session_state.session_config["masking"][colorspace]["thresh_val_upper"], 
+                                            step=1, on_change=update_config(colorspace), key=f"{colorspace}_mask_thresh_val_upper")
+
+        work_thresh_val_lower = st.number_input('Lower Threshold', min_value=0, max_value=255, 
+                                                        value=st.session_state.session_config["masking"][colorspace]["thresh_val_lower"], 
+                                                    step=1, on_change=update_config(colorspace), key=f"{colorspace}_mask_thresh_val_lower")
 
     else:
         pass
@@ -102,7 +113,7 @@ def mask_ui(img, colorspace):
 
     return bin_mask
 
-def binary_mask_channel(img, channel, method, thresh_val, max_val, obj_type):
+def binary_mask_channel(img, channel, method, thresh_val, max_val, obj_type, thresh_val_upper, thresh_val_lower):
     """
     Single expandable function for handling channel output
     """
@@ -163,6 +174,17 @@ def binary_mask_channel(img, channel, method, thresh_val, max_val, obj_type):
             object_type=obj_type
             )
 
+    elif method == "RANGE":
+        bin_map, range_masked_img = pcv.threshold.custom_range(
+            img=gray_img,
+            lower_thresh=[thresh_val_lower],
+            upper_thresh=[thresh_val_upper],
+            channel="gray"
+            )
+
+        # clear masked image out of memory
+        range_masked_img = None
+
     else:
         # Expand here with other methods
         pass
@@ -190,12 +212,17 @@ def binary_mask_channel_dict(img, channel, channel_dict):
     working_thresh_val = channel_dict["thresh_val"]
     working_max_val = channel_dict["max_val"]
     working_obj_color = channel_dict["obj_color"]
+    working_thresh_val_upper = channel_dict["thresh_val_upper"]
+    working_thresh_val_lower = channel_dict["thresh_val_lower"]
+
 
     bin_mask = binary_mask_channel(img, channel, 
                                    method=working_method,
                                    thresh_val=working_thresh_val,
                                    max_val=working_max_val,
-                                   obj_type=working_obj_color)
+                                   obj_type=working_obj_color,
+                                   thresh_val_upper=working_thresh_val_upper,
+                                   thresh_val_lower=working_thresh_val_lower)
 
     return bin_mask
 
@@ -222,5 +249,13 @@ def update_config(colorspace):
         st.session_state.session_config["masking"][colorspace]["thresh_val"] = st.session_state[f"{colorspace}_mask_thresh_val"]
         st.session_state.session_config["masking"][colorspace]["max_val"] = st.session_state[f"{colorspace}_mask_max_val"]
 
+    except:
+        pass
+
+
+    # Range option catch block
+    try:
+        st.session_state.session_config["masking"][colorspace]["thresh_val_upper"] = st.session_state[f"{colorspace}_mask_thresh_val_upper"]
+        st.session_state.session_config["masking"][colorspace]["thresh_val_lower"] = st.session_state[f"{colorspace}_mask_thresh_val_lower"]
     except:
         pass

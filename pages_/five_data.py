@@ -121,15 +121,14 @@ def app():
 			st.download_button("Download Raw JSON", f, file_name="results.json")
 	
 	# Show tabular results in a DF element
-	if st.checkbox("Show Results"):
-		st.subheader("Morphology Results Table")
-		csv_results_df = read_csv(csv_results_path)
-		st.dataframe(csv_results_df)
+	st.subheader("Morphology Results Table")
+	csv_results_df = read_csv(csv_results_path)
+	st.dataframe(csv_results_df)
 
-		if os.path.isfile(color_csv_results_path):
-			st.subheader("Color Results Table")
-			color_csv_results_df = read_csv(color_csv_results_path)
-			st.dataframe(color_csv_results_df)
+	if os.path.isfile(color_csv_results_path):
+		st.subheader("Color Results Table")
+		color_csv_results_df = read_csv(color_csv_results_path)
+		st.dataframe(color_csv_results_df)
 
 	# Bulk download button
 	st.subheader("Download All Data")
