@@ -146,4 +146,3 @@ def app():
 	if os.path.isfile(zip_path):
 		with open(zip_path, "rb") as f:
 			st.download_button("Download All Results (ZIP File)", f, file_name=zip_name)
-	
