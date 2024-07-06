@@ -24,25 +24,26 @@ def convert_old_masking(mask_config):
     """
      
     for cs_idx, cs in enumerate(mask_config["colorspaces"]):
-        try:
-            work_dict = {}
+        if (cs not in mask_config.keys()):
+            try:
+                work_dict = {}
 
-            # convert method
-            if (mask_config["otsu"][cs_idx] == True):
-                work_dict["method"] = "OTSU"
-            else:
-                work_dict["method"] = "BINARY"
+                # convert method
+                if (mask_config["otsu"][cs_idx] == True):
+                    work_dict["method"] = "OTSU"
+                else:
+                    work_dict["method"] = "BINARY"
 
-            # Convert mask vals
-            work_dict["thresh_val"] = mask_config["masking_vals"][cs_idx][0]
-            work_dict["max_val"] = mask_config["masking_vals"][cs_idx][1]
-            
-            # convert object color vals
-            work_dict["obj_color"] = COLOR_OPTIONS[mask_config["obj_color"][cs_idx]]
+                # Convert mask vals
+                work_dict["thresh_val"] = mask_config["masking_vals"][cs_idx][0]
+                work_dict["max_val"] = mask_config["masking_vals"][cs_idx][1]
+                
+                # convert object color vals
+                work_dict["obj_color"] = COLOR_OPTIONS[mask_config["obj_color"][cs_idx]]
 
-            mask_config[cs] = work_dict
-        except:
-            continue
+                mask_config[cs] = work_dict
+            except:
+                continue
     
     return mask_config
           
