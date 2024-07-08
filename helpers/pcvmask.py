@@ -26,7 +26,7 @@ def convert_old_masking(mask_config):
     for cs_idx, cs in enumerate(mask_config["colorspaces"]):
         if (cs not in mask_config.keys()):
             try:
-                work_dict = {}
+                work_dict = mask_default_vals(cs)
 
                 # convert method
                 if (mask_config["otsu"][cs_idx] == True):
@@ -45,6 +45,10 @@ def convert_old_masking(mask_config):
             except:
                 continue
     
+    del mask_config["masking_vals"]
+    del mask_config["obj_color"]
+    del mask_config["otsu"]
+
     return mask_config
           
 
