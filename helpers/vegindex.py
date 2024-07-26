@@ -163,6 +163,7 @@ def calc_RGRATIO_arr(r,g,b):
 
     return numer/denom
 
+
 # Wrap function
 
 def calc_all_indices(r, g, b):

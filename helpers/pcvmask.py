@@ -15,7 +15,7 @@ COLOR_INT_TO_STR = {0:"DARK",1:"LIGHT"}
 BOOL_COMP_LIST = ["AND", "OR", "XOR"]
 COLORSPACES_LIST = ["H", "S", "V", 
                     "L", "A", "B",
-                    "BGI"]
+                    "BGI", "SCI"]
 
 def get_cs_list(): return COLORSPACES_LIST
 def get_bool_list(): return BOOL_COMP_LIST
@@ -169,10 +169,6 @@ def binary_mask_channel(img, channel, method,
         gray_img = vidx.run_arr(img,vidx.norm_g) * 255
         gray_img = gray_img.astype(np.uint8)
 
-    elif channel.upper() == "SCI":
-        gray_img = vidx.run_arr(img, vidx.calc_SCI_arr) *255
-        gray_img = gray_img.astype(np.uint8)
-
     elif channel.upper() == "BGI":
         bgi_max = 255
         bgi_min = 0
@@ -189,6 +185,12 @@ def binary_mask_channel(img, channel, method,
         gray_img = vidx.run_arr(reflect_arr, vidx.calc_RGRATIO_arr)
         gray_img = norm_channel_uint8(gray_img, rgratio_max, rgratio_min)
 
+    elif channel.upper() == "SCI":
+        sci_max = 1
+        sci_min = -1
+
+        gray_img = vidx.run_arr(img, vidx.calc_SCI_arr)
+        gray_img = norm_channel_uint8(gray_img, sci_max, sci_min)
 
     else:
         pass
