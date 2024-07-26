@@ -153,6 +153,16 @@ def calc_BGI_arr(r,g,b):
 
     return numer/denom
 
+def calc_RGRATIO_arr(r,g,b):
+    """
+    Novel
+    """
+
+    numer = g + r
+    denom = b
+
+    return numer/denom
+
 # Wrap function
 
 def calc_all_indices(r, g, b):
@@ -188,3 +198,19 @@ def run_arr(rgb_arr, func):
     b = rgb_arr[:,:,2]
 
     return func(r, g, b)
+
+def get_reflectance_arr(rgb_arr):
+
+    rgb_arr_float = rgb_arr.astype(np.float32)
+
+    channel_r = rgb_arr_float[:,:,0]
+    channel_g = rgb_arr_float[:,:,1]
+    channel_b = rgb_arr_float[:,:,2]
+
+    sum_arr = channel_r + channel_g + channel_b
+
+    r_reflect = channel_r / sum_arr
+    g_reflect = channel_g / sum_arr
+    b_reflect = channel_b / sum_arr
+
+    return np.stack([r_reflect, g_reflect, b_reflect], axis=2)

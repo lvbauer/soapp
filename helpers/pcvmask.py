@@ -159,6 +159,16 @@ def binary_mask_channel(img, channel, method, thresh_val, max_val, obj_type, thr
         gray_img = vidx.run_arr(img, vidx.calc_BGI_arr)
         gray_img = norm_channel_uint8(gray_img, bgi_max, bgi_min)
 
+    elif channel.upper() == "RGRATIO":
+        rgratio_max = 1.0
+        rgratio_min = 0.0019569
+
+        reflect_arr = vidx.get_reflectance_arr(img)
+
+        gray_img = vidx.run_arr(reflect_arr, vidx.calc_RGRATIO_arr)
+        gray_img = norm_channel_uint8(gray_img, rgratio_max, rgratio_min)
+
+
     else:
         pass
 
