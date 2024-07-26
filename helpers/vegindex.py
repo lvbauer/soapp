@@ -106,6 +106,20 @@ def calc_VARIgreen(Rr, Rg, Rb):
     if (denom == 0): return None
     return float(numer/denom)
 
+def calc_NDAI(r, g, b):
+    """
+    Cite: Kim & van Iersel (2023)
+    https://doi.org/10.3389/fpls.2023.1155722
+    Normalized Difference Anthocyanin Index (NDAI)
+    Same as Soil Color Index?
+    """
+
+    numer = r - g
+    denom = r + g
+
+    if (denom == 0): return None
+    return float(numer/denom)
+
 # Background indices
 def calc_SCI(r,g,b):
     """
@@ -172,6 +186,7 @@ def calc_all_indices(r, g, b):
     
     vi_dict["index_GI"] = calc_green_index(r,g,b)
     vi_dict["index_GLI"] = calc_GLI(r,g,b)
+    vi_dict["index_NDAI"] = calc_NDAI(r,g,b)
 
     Rr, Rg, Rb = norm_rgb(r,g,b)
     
