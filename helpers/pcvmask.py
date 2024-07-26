@@ -13,7 +13,9 @@ COLOR_INT_TO_STR = {0:"DARK",1:"LIGHT"}
 
 # critical information
 BOOL_COMP_LIST = ["AND", "OR", "XOR"]
-COLORSPACES_LIST = ["H", "S", "V", "L", "A", "B","BGI"]
+COLORSPACES_LIST = ["H", "S", "V", 
+                    "L", "A", "B",
+                    "BGI"]
 
 def get_cs_list(): return COLORSPACES_LIST
 def get_bool_list(): return BOOL_COMP_LIST
@@ -111,14 +113,33 @@ def mask_ui(img, colorspace):
     work_obj_color = st.radio(label="Object Color", options=COLOR_OPTIONS, index=COLOR_OPTIONS.index(st.session_state.session_config["masking"][colorspace]["obj_color"]), 
                                 key=f"{colorspace}_mask_obj_color", on_change=update_config(colorspace))
 
-    bin_mask = binary_mask_channel_dict(img, colorspace, channel_dict=st.session_state.session_config["masking"][colorspace])
+    if ("show_masks_bool" in st.session_state) and (st.session_state["show_masks_bool"]):
+        bin_mask, channel_arr = binary_mask_channel_dict(img, colorspace, 
+                                                         channel_dict=st.session_state.session_config["masking"][colorspace],
+                                                         return_channel=True)
 
+        st.write(f"Channel: {colorspace}")
+        st.image(channel_arr)
 
-    st.image(bin_mask)
+        st.write(f"Channel Mask: {colorspace}")
+        st.image(bin_mask)
 
-    return bin_mask
+        return bin_mask
+    
+    
+    else:
+        bin_mask = binary_mask_channel_dict(img, colorspace, 
+                                            channel_dict=st.session_state.session_config["masking"][colorspace])
 
-def binary_mask_channel(img, channel, method, thresh_val, max_val, obj_type, thresh_val_upper, thresh_val_lower):
+        st.write(f"Channel Mask: {colorspace}")
+        st.image(bin_mask)
+
+        return bin_mask
+
+def binary_mask_channel(img, channel, method, 
+                        thresh_val, max_val, obj_type, 
+                        thresh_val_upper, thresh_val_lower,
+                        return_channel=False):
     """
     Single expandable function for handling channel output
     """
@@ -204,7 +225,10 @@ def binary_mask_channel(img, channel, method, thresh_val, max_val, obj_type, thr
         # Expand here with other methods
         pass
 
-    return bin_map
+    if (return_channel):
+        return bin_map, gray_img
+    else:
+        return bin_map
 
 def norm_channel_uint8(img_arr, max_val, min_val):
     """
@@ -219,7 +243,7 @@ def linear_normalization(x, minval, maxval):
     denom = maxval-minval
     return numer/denom
 
-def binary_mask_channel_dict(img, channel, channel_dict):
+def binary_mask_channel_dict(img, channel, channel_dict, return_channel=False):
     """Wrapper for binary_mask_channel for high throughput functionality
     """
 
@@ -230,16 +254,29 @@ def binary_mask_channel_dict(img, channel, channel_dict):
     working_thresh_val_upper = channel_dict["thresh_val_upper"]
     working_thresh_val_lower = channel_dict["thresh_val_lower"]
 
+    if (return_channel):
+        bin_mask, channel_arr = binary_mask_channel(img, channel, 
+                                    method=working_method,
+                                    thresh_val=working_thresh_val,
+                                    max_val=working_max_val,
+                                    obj_type=working_obj_color,
+                                    thresh_val_upper=working_thresh_val_upper,
+                                    thresh_val_lower=working_thresh_val_lower,
+                                    return_channel=True)
 
-    bin_mask = binary_mask_channel(img, channel, 
-                                   method=working_method,
-                                   thresh_val=working_thresh_val,
-                                   max_val=working_max_val,
-                                   obj_type=working_obj_color,
-                                   thresh_val_upper=working_thresh_val_upper,
-                                   thresh_val_lower=working_thresh_val_lower)
+        return bin_mask, channel_arr
+    
+    else:
+        bin_mask = binary_mask_channel(img, channel, 
+                                    method=working_method,
+                                    thresh_val=working_thresh_val,
+                                    max_val=working_max_val,
+                                    obj_type=working_obj_color,
+                                    thresh_val_upper=working_thresh_val_upper,
+                                    thresh_val_lower=working_thresh_val_lower)
 
-    return bin_mask
+        return bin_mask
+    
 
 def pcv_mask_logic_op(mask1, mask2, boolean):
 	if (boolean.upper() == "AND"):

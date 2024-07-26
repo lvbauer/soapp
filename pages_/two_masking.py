@@ -67,6 +67,8 @@ def app():
 		selections = st.multiselect("Colorspaces:", options=COLORSPACES_LIST, default=st.session_state.session_config["masking"]["colorspaces"], 
 									key="colorspaces_select", on_change=update_config)
 		
+		st.checkbox("Show Channels Inline", key="show_masks_bool")
+
 		# Initial values
 		# TODO is this still needed
 		if (config_bool):
