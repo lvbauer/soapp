@@ -6,6 +6,8 @@ from cv2 import resize, putText, FONT_HERSHEY_DUPLEX, cvtColor, COLOR_BGR2RGB
 from helpers.displayimg import *
 import time
 
+REMIND_SAVE_MSG = "Note: It is recommended you save your config before running the analysis."
+
 def app():
 
 	# Unpack values from storage
@@ -69,7 +71,8 @@ def app():
 		watershed_distance = st.number_input(label="Set Minimum Distance of Local Maximum for Segmentation Analysis", 
 			min_value=1, max_value=None, step=1, value=st.session_state.session_config["analysis"]["watershed_distance"], key="watershed_distance_input", on_change=update_config)
 
-	st.header("Analysis")
+	st.header("Run Analysis")
+
 	# Inputs:
 	#   start = beginning value for range
 	#   stop  = ending value for range (exclusive)
@@ -246,6 +249,7 @@ def app():
 		# Write true to analysis_run for tracking
 		st.session_state.analysis_run = True
 
+	st.write(REMIND_SAVE_MSG)
 
 	st.session_state.args = args
 
