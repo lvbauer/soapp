@@ -32,6 +32,8 @@ def app():
 	# TODO Change this
 	universal_resize_factor = st.session_state.universal_resize_factor
 	
+
+
 	st.header("Analyzed Plants")
 
 	# Display results image
@@ -42,6 +44,10 @@ def app():
 				st.caption("NOTE: Image has been downscaled. To see full resolution image, set Resize Factor to 1.")
 
 			st.image(os.path.join(session_path, "analyzed_image.png"), use_column_width=True)
+
+	else:
+		st.info("Please run analysis to view results here.")
+		st.stop()
 
 	# Present measured data
 	st.subheader("Data")
