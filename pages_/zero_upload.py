@@ -46,6 +46,7 @@ def app():
     with open(file_path, "wb") as f:
       f.write(user_image.getbuffer())
     st.image(file_path)
+    st.write(f'Selected Image: "{user_image.name}"')
     
 
   st.session_state.user_image_file = user_image
