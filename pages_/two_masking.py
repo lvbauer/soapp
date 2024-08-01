@@ -99,7 +99,7 @@ def app():
 			# Combine masks together
 			num_masks = len(working_mask_list)
 			bool_update(num_masks)
-			bool_op_list = st.session_state.session_config["masking"]["log_ops"]
+			
 
 			if (num_masks > 1):
 				working_combination_str = None
@@ -117,8 +117,12 @@ def app():
 						on_change=bool_update(len(st.session_state["colorspaces_select"])))
 
 				bool_op_mask = working_mask_list[0]
+				bool_op_list = st.session_state.session_config["masking"]["log_ops"]
+				print(bool_op_list)
+
 				for op_idx, op in enumerate(bool_op_list):
-					if (op_idx+1 > num_masks):
+					print(op_idx)
+					if (op_idx+1 >= num_masks):
 						break
 					else:
 						working_mask = working_mask_list[op_idx+1]
@@ -164,19 +168,24 @@ def pcv_mask_logic_op(mask1, mask2, boolean):
 		return pcv.logical_xor(mask1, mask2)
 
 def bool_update(num):
+	"""Num is number of channels selected"""
 	working_bool_ops = []
 	for i in range(num-1):
 		working_bool_op_key = BOOL_KEY_PREFIX + str(i)
+		# Try update from config
+		session_ops_list = st.session_state.session_config["masking"]["log_ops"]
 		try:
 			# Try update from selector
-			working_bool_ops.append(st.session_state[working_bool_op_key])
+			if (working_bool_op_key in st.session_state):
+				working_bool_ops.append(st.session_state[working_bool_op_key])
+			else:
+				working_bool_ops.append(session_ops_list[i])
 		except:
-			# Try update from config
-			session_ops_list = st.session_state.session_config["masking"]["log_ops"]
 			if i < len(session_ops_list):
 				working_bool_ops.append(session_ops_list[i])
-			# Put in default value
-			working_bool_ops.append("AND")
+			else:
+				# Put in default value
+				working_bool_ops.append("AND")
 	st.session_state.session_config["masking"]["log_ops"] = working_bool_ops
 
 def update_config():
