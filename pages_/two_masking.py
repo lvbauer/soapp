@@ -118,10 +118,8 @@ def app():
 
 				bool_op_mask = working_mask_list[0]
 				bool_op_list = st.session_state.session_config["masking"]["log_ops"]
-				print(bool_op_list)
 
 				for op_idx, op in enumerate(bool_op_list):
-					print(op_idx)
 					if (op_idx+1 >= num_masks):
 						break
 					else:
