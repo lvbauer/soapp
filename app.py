@@ -76,6 +76,10 @@ app.add_page("Bulk Process", six_ht.app)
 st.sidebar.subheader("Navigation:")
 app.run()
 
+# Uploader key
+if "config_uploader_key" not in st.session_state:
+    st.session_state.config_uploader_key = 0
+
 # Other session options, should render as final items in the sidebar
 with st.sidebar:
 	st.subheader("Options:")
@@ -85,18 +89,22 @@ with st.sidebar:
 								 value=st.session_state.universal_resize_factor, key="universal_resize_factor_input", on_change=on_update)
 
 	# Config file upload
-	st.session_state.user_config = st.file_uploader("Upload Config File", on_change=set_upload_bool)
+	st.session_state.user_config = st.file_uploader("Upload Config File", on_change=set_upload_bool, 
+												 key=f"uploader_{st.session_state.config_uploader_key}")
 
 	if (st.session_state.user_config != None) and ("upload_bool" not in st.session_state):
 		config_data = st.session_state.user_config.getvalue().decode("utf-8")
 		st.session_state.session_config = json.loads(config_data)
 		st.session_state.upload_bool = True
+		st.session_state.config_uploader_key += 1
 	
 	if ("upload_bool" in st.session_state):
 		if (st.session_state["upload_bool"] == False) and (st.session_state.user_config != None):
 			config_data = st.session_state.user_config.getvalue().decode("utf-8")
 			st.session_state.session_config = json.loads(config_data)
 			st.session_state.upload_bool = True
+			st.session_state.config_uploader_key += 1
+
 
 	# Convert old masking config values
 	if ("masking" in st.session_state.session_config) and ("masking_vals" in st.session_state.session_config["masking"]):
