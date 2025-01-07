@@ -183,7 +183,7 @@ def app():
 																			  roi_hierarchy=hierarchy, 
 																			  object_contour=obj, 
 																			  obj_hierarchy=obj_hierarchy, 
-																			  roi_type="partial")
+																			  roi_type=st.session_state.session_config["analysis"]["roi_mode"])
 
 				# If the plant area is zero then no plant was detected for the ROI
 				# and no measurements can be done

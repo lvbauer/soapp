@@ -8,6 +8,8 @@ import time
 
 REMIND_SAVE_MSG = "Note: It is recommended you save your config before running the analysis."
 
+ROI_MODE_OPTIONS = ["partial", "cutto", "largest"]
+
 def app():
 
 	# Unpack values from storage
@@ -31,6 +33,9 @@ def app():
 	session_path = st.session_state.session_path
 
 	# Initialize analysis bool dictionary
+	if ("roi_mode" not in st.session_state.session_config["analysis"]):
+			st.session_state.session_config["analysis"]["roi_mode"] = "partial"
+
 	if ("color" not in st.session_state.session_config["analysis"]):
 		st.session_state.session_config["analysis"]["color"] = False
 	
@@ -62,6 +67,9 @@ def app():
 	analysis_img_write = st.checkbox("Write Labels on Image", value=True)
 
 	# Checkboxes for other options
+	roi_determ_mode = st.selectbox("ROI Mode", options=ROI_MODE_OPTIONS, 
+								index=ROI_MODE_OPTIONS.index(st.session_state.session_config["analysis"]["roi_mode"]),
+								key="roi_mode_select_input", on_change=update_config)
 	color_analysis_check = st.checkbox("Run Color Analysis", value=st.session_state.session_config["analysis"]["color"], 
 										key="color_check_input", on_change=update_config)
 	watershed_analysis_check = st.checkbox("Run Watershed Segmentation Analysis", value=st.session_state.session_config["analysis"]["watershed"],
@@ -139,7 +147,7 @@ def app():
 																			  roi_hierarchy=hierarchy, 
 																			  object_contour=obj, 
 																			  obj_hierarchy=obj_hierarchy, 
-																			  roi_type="partial")
+																			  roi_type=st.session_state.session_config["analysis"]["roi_mode"])
 
 				# If the plant area is zero then no plant was detected for the ROI
 				# and no measurements can be done
@@ -255,6 +263,9 @@ def app():
 
 
 def update_config():
+	# Update roi_mode
+	st.session_state.session_config["analysis"]["roi_mode"] = st.session_state["roi_mode_select_input"]
+
 	# Update color analysis bool
 	st.session_state.session_config["analysis"]["color"] = st.session_state["color_check_input"]
 
