@@ -37,6 +37,7 @@ def calc_GRVI(Rr, Rg, Rb):
     Original paper: https://doi.org/10.1016/0034-4257(79)90013-0
     Reference Paper: https://doi.org/10.1016/j.jag.2015.02.012
     Uses relative reflectance RGB values, (funcs: norm_r, norm_g, norm_b)
+    Green Red Vegetation Index (GRVI)
     """
     numer = Rg - Rr
     denom = Rg + Rr
@@ -48,6 +49,7 @@ def calc_MGRVI(Rr, Rg, Rb):
     """
     Cite: https://doi.org/10.1016/j.jag.2015.02.012
     Uses relative reflectance RGB values, (funcs: norm_r, norm_g, norm_b)
+    Modified Green Red Vegetation Index (MGRVI)
     """
     Rg_sq = Rg**2
     Rr_sq = Rr**2
@@ -61,6 +63,7 @@ def calc_RGBVI(Rr, Rg, Rb):
     """
     Cite: https://doi.org/10.1016/j.jag.2015.02.012
     Uses relative reflectance RGB values, (funcs: norm_r, norm_g, norm_b)
+    Red Green Blue Vegetation Index
     """
     Rg_sq = Rg**2
     RbRr_prod = Rb*Rr
