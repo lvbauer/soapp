@@ -1,6 +1,7 @@
 import streamlit as st
 import os
 import json
+from datetime import datetime
 
 # Custom imports 
 from multipage import MultiPage
@@ -15,6 +16,9 @@ PIL.Image.MAX_IMAGE_PIXELS = None
 RESIZE_FACTOR_HELP = """
 Increase resize factor to increase performance at the expense of display image resolution. Does NOT impact final measurements.
 """
+
+# SOAPP Version
+st.session_state.soapp_version = "1.1"
 
 # Make session storage dir
 @st.cache_resource
@@ -56,6 +60,11 @@ if ("session_data" not in st.session_state):
 									"analysis":{},
 									"data":{}
 									}
+
+	# Add fundamental metadata to session config
+	st.session_state.session_config["meta"]["soapp_version"] = st.session_state.soapp_version
+	st.session_state.session_config["meta"]["config_start_time"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+	
 	st.session_state.user_config = None
 	st.session_state.universal_resize_factor = 1
 
@@ -115,6 +124,9 @@ with st.sidebar:
 
 	# Write config file
 	if "session_config" in st.session_state:
+		# Update current time in config
+		st.session_state.session_config["meta"]["current_time"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
 		# Write config file
 		with open(os.path.join(st.session_state.session_path, "analysis_config.json"), "w") as f:
 			json.dump(st.session_state.session_config, f)

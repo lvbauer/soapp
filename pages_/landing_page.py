@@ -4,7 +4,17 @@ import os
 
 def app():
 
-    st.title("SOApp: Simple Online Automated Plant Phenomics")
+    st.title("SOAPP")
+    st.subheader("Simple Online Automated Plant Phenomics")
+
+    # Begin flavor text
+    st.markdown(f"Welcome to SOAPP (Version {st.session_state.soapp_version}).")
+
+    st.markdown("To get started with SOAPP, see the getting started guide here: [link](https://github.com/lvbauer/soapp-tutorial/blob/main/soapp-guide.md).")
+
+    st.markdown("The original SOAPP paper is available here for reference and citation: [link](https://doi.org/10.2478/gsr-2026-0008).")
+
+    st.markdown("The full source code repository is available on GitHub here: [link](https://github.com/lvbauer).")
 
     # Generate new session automatically
     if (st.session_state.first_run_bool):

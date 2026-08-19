@@ -1,2 +1,2 @@
 # soapp
-SOApp (Simple Online Automated Plant Phenomics)
+SOAPP (Simple Online Automated Plant Phenomics)
