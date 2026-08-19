@@ -18,7 +18,7 @@ Increase resize factor to increase performance at the expense of display image r
 """
 
 # SOAPP Version
-st.session_state.soapp_version = "1.1"
+st.session_state.soapp_version = "1.0.0"
 
 # Make session storage dir
 @st.cache_resource
